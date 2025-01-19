@@ -1,0 +1,19 @@
+swagger: "2.0"
+info:
+  title: "Logout Service"
+  description: "API for handling user logout"
+  version: "1.0.0"
+paths:
+  /logout:
+    post:
+      summary: "Logout user"
+      description: "Clears the authentication token cookie and logs out the user."
+      responses:
+        200:
+          description: "Logout successful"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Logout successful"
