@@ -25,7 +25,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Endpoint para crear usuarios
 app.post('/create', createUser);
 
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
   console.log(`Service running on http://localhost:${port}`);
