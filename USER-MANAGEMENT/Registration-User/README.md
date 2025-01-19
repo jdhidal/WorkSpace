@@ -11,11 +11,11 @@ $headers = @{
 }
 
 $body = '{
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "password": "password123"
+    "name": "Diego Hidalgo",
+    "email": "diego.doe@example.com",
+    "password": "password1234"
 }'
 
-Invoke-RestMethod -Uri http://localhost:3003/create -Method Post -Headers $headers -Body $body
+Invoke-RestMethod -Uri http://localhost:3001/create -Method Post -Headers $headers -Body $body
 ```
 
