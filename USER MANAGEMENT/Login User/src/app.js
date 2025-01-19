@@ -1,32 +1,34 @@
+// src/app.js
 const express = require('express');
-const dotenv = require('dotenv');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
-const fs = require('fs');
-const yaml = require('js-yaml');
-const routes = require('./routes');
+const YAML = require('yamljs');
+const userController = require('./UserController');
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// Configuración de CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // Definido en .env
-  credentials: true,
+  origin: process.env.FRONTEND_URL,
+  credentials: true
 };
+
+// Middleware
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(cookieParser()); // Para manejar cookies
 
-// Swagger setup
-const swaggerDocument = yaml.load(fs.readFileSync('./src/swagger.yaml', 'utf8'));
+// Cargar Swagger
+const swaggerDocument = YAML.load('./src/swagger.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rutas
-app.use('/api', routes);
+app.post('/login', userController.login);
 
 const port = process.env.PORT || 3002;
 app.listen(port, () => {
