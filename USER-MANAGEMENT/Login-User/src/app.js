@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
-const userController = require('./UserController');
+const userController = require('./userController');
 
 dotenv.config();
 
