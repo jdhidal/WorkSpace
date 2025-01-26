@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - diego 
+      - diego  # Cambia 'diego' al nombre de la rama que estés usando si es necesario
 
 jobs:
   build_and_deploy:
@@ -29,16 +29,15 @@ jobs:
       - name: Detect changed microservices
         id: changes
         run: |
-          # Verificar si existe un commit previo
+          # Si no hay commit previo, se usa el HEAD de la rama actual
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Considering current commit."
-            echo "Changed files: $(git diff --name-only ${{ github.sha }}^ ${{ github.sha }})"
+            # Usamos HEAD para el diff con el commit anterior
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           else
-            echo "Changed files: $(git diff --name-only ${{ github.event.before }} ${{ github.sha }})"
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           fi
 
-          # Detectar archivos modificados
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           echo "Changed files: $CHANGED_FILES"
           
           # Inicializar lista de servicios modificados
@@ -63,7 +62,6 @@ jobs:
           else
             echo "Modified services: ${CHANGED_SERVICES[@]}"
             echo "changed_services=${CHANGED_SERVICES[*]}" >> $GITHUB_ENV
-          fi
 
       # Paso 5: Construir y desplegar los microservicios modificados
       - name: Build and Deploy changed services
