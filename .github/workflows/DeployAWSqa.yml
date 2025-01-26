@@ -31,7 +31,7 @@ jobs:
         run: |
           # Obtener la lista de archivos modificados entre los commits
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
-            echo "No previous commit found or invalid SHA. Considering current commit."
+            echo "No previous commit found o invalid SHA. Considering current commit."
             CHANGED_FILES=$(git diff --name-only HEAD)
           else
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
@@ -42,11 +42,11 @@ jobs:
           # Inicializar lista de servicios modificados
           CHANGED_SERVICES=""
 
-          # Recorrer todas las subcarpetas de nivel superior
-          for dir in */*/*/*; do
+          # Detectar carpetas de nivel 2 modificadas (e.g., USER-MANAGEMENT/Login-User)
+          for dir in $(find . -mindepth 2 -maxdepth 2 -type d); do
             # Verificar si algún archivo dentro de la subcarpeta fue modificado
-            if echo "$CHANGED_FILES" | grep -q "^${dir}"; then
-              CHANGED_SERVICES="${CHANGED_SERVICES} ${dir}"
+            if echo "$CHANGED_FILES" | grep -q "^${dir:2}/"; then  # :2 elimina prefijo './'
+              CHANGED_SERVICES="${CHANGED_SERVICES} ${dir:2}"
             fi
           done
 
@@ -66,7 +66,7 @@ jobs:
           for service in ${{ env.changed_services }}; do
             echo "Building and deploying $service..."
             cd $service
-            IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service%/}:latest"  # Eliminar barra final en el nombre
+            IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service##*/}:latest"  # Eliminar prefijo de la ruta y obtener el nombre del servicio
             docker build -t $IMAGE_NAME .
             docker push $IMAGE_NAME
             cd - || exit
