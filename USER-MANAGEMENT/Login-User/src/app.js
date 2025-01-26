@@ -12,7 +12,6 @@ dotenv.config();
 
 const app = express();
 
-// Configuration de CORS
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
   credentials: true
