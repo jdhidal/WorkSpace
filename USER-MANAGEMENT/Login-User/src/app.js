@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 
-// Configuración de CORS
+// Configuration de CORS
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
   credentials: true
@@ -21,13 +21,11 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
-app.use(cookieParser()); // Para manejar cookies
+app.use(cookieParser()); 
 
-// Cargar Swagger
 const swaggerDocument = YAML.load('./src/swagger.yaml');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Rutas
 app.post('/login', userController.login);
 
 const port = process.env.PORT || 3002;
