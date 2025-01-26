@@ -8,8 +8,8 @@ def clear_token_cookie(response):
         expires=0, 
         path='/', 
         httponly=True, 
-        samesite='Lax',  # Cambiar a Lax para desarrollo
-        secure=False      # Asegúrate de usar True en producción (HTTPS)
+        samesite='Lax', 
+        secure=False 
     )
 
 

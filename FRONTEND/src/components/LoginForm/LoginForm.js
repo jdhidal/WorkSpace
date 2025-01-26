@@ -30,7 +30,9 @@ const LoginForm = () => {
 
   return (
     <div className="form-wrapper">
-      <h2>Login I need 18 in supletory</h2>
+      <div class="centered-text">
+        <h2>Welcome to WorkSpace</h2>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="form-control">
           <input

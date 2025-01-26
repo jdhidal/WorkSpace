@@ -9,9 +9,8 @@ const ProtectedRoute = () => {
   };
 
   const token = getCookie('token');
-  console.log('Token:', token); // Verifica el token en la aplicación web
+  console.log('Token:', token); 
 
-  // Si hay un token, se renderiza el contenido de las rutas anidadas, si no, redirige al login
   return token ? <Outlet /> : <Navigate to="/" />;
 };
 

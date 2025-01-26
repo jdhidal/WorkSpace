@@ -9,16 +9,17 @@ const Header = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Realizar la solicitud de logout al backend
+    // Llamar al backend para hacer logout
     fetch('http://localhost:3003/logout', {
       method: 'POST',
-      credentials: 'include',  // Asegúrate de que las cookies se envíen correctamente
+      credentials: 'include', 
     })
       .then(response => response.json())
       .then(data => {
         console.log(data.message);
-        onLogout();
-        navigate('/');
+        onLogout(); // Ejecutar la función onLogout pasada como prop
+        
+        window.location.reload();
       })
       .catch(error => console.error('Error:', error));
   };

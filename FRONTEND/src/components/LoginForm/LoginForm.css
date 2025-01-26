@@ -47,6 +47,10 @@ form .form-control {
     margin-bottom: 16px;
 }
 
+.centered-text {
+    text-align: center;
+}
+
 .form-control input {
     height: 100%;
     width: 100%;

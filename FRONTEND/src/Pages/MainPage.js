@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
-import Cookies from 'js-cookie';
-import io from 'socket.io-client';
-import axios from 'axios';
 import './MainPage.css'; // Import Styles
 import Edificios from './Edificios.jpg';
 
 const MainPage = () => {
+  
   const navigate = useNavigate();
-
+  
   const handleLogout = () => {
     navigate('/');
   };
