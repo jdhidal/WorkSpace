@@ -29,20 +29,17 @@ jobs:
       - name: Detect changed microservices
         id: changes
         run: |
-          # Validar si hay un commit previo
+          # Validate the previous commit
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
-            echo "No previous commit found or invalid SHA. Considering current commit as the reference."
-            PREVIOUS_COMMIT="${{ github.sha }}"  # Si no hay commit previo, usamos el actual
-          else
-            PREVIOUS_COMMIT="${{ github.event.before }}"  # Usamos el commit previo
+            echo "No previous commit found or invalid SHA. Skipping detection."
+            echo "changed_services=" >> $GITHUB_ENV
+            exit 0
           fi
 
-          # Detectar los archivos cambiados
-          CHANGED_FILES=$(git diff --name-only $PREVIOUS_COMMIT ${{ github.sha }})
+          # Detect changes
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           echo "Changed files: $CHANGED_FILES"
-          
           CHANGED_SERVICES=()
-          # Recorrer todas las carpetas de primer nivel (User-management, Order-management, Product-management, etc.)
           for dir in */; do
             if [ -d "$dir" ]; then
               # Recorrer las subcarpetas dentro de cada carpeta de primer nivel
@@ -54,28 +51,24 @@ jobs:
             fi
           done
 
-          # Output de los servicios cambiados en una variable de entorno
+          # Output changed services to environment variable
           if [ ${#CHANGED_SERVICES[@]} -eq 0 ]; then
             echo "No microservices changed."
             echo "changed_services=" >> $GITHUB_ENV
           else
             echo "Modified services: ${CHANGED_SERVICES[@]}"
             echo "changed_services=${CHANGED_SERVICES[*]}" >> $GITHUB_ENV
+          fi
 
       # Step 2: Build and Deploy changed services
       - name: Build and Deploy changed services
         run: |
-          # Iterar sobre los servicios cambiados
-          if [ -z "${{ env.changed_services }}" ]; then
-            echo "No services to deploy"
-            exit 0
-          fi
-
+          # Iterate over changed services
           for service in ${{ env.changed_services }}; do
             if [ -d "$service" ]; then
               echo "Building and deploying $service..."
               cd $service
-              # Usar DOCKER_USERNAME para etiquetar la imagen
+              # Use DOCKER_USERNAME for image tagging
               IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service}:latest"
               docker build -t $IMAGE_NAME .
               docker push $IMAGE_NAME
