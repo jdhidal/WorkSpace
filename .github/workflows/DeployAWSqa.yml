@@ -29,10 +29,10 @@ jobs:
       - name: Detect changed microservices
         id: changes
         run: |
-          # Validar si hay un commit previo
+          # Verificar si existe un commit previo
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Considering current commit."
-            echo "Changed files: ${CHANGED_FILES}"
+            echo "Changed files: $(git diff --name-only ${{ github.sha }}^ ${{ github.sha }})"
           else
             echo "Changed files: $(git diff --name-only ${{ github.event.before }} ${{ github.sha }})"
           fi
