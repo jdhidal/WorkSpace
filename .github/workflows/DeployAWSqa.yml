@@ -42,6 +42,7 @@ jobs:
           echo "Changed files: $CHANGED_FILES"
           
           CHANGED_SERVICES=()
+          # Recorrer todas las carpetas de primer nivel (User-management, Order-management, Product-management, etc.)
           for dir in */; do
             if [ -d "$dir" ]; then
               # Recorrer las subcarpetas dentro de cada carpeta de primer nivel
@@ -65,6 +66,11 @@ jobs:
       - name: Build and Deploy changed services
         run: |
           # Iterar sobre los servicios cambiados
+          if [ -z "${{ env.changed_services }}" ]; then
+            echo "No services to deploy"
+            exit 0
+          fi
+
           for service in ${{ env.changed_services }}; do
             if [ -d "$service" ]; then
               echo "Building and deploying $service..."
