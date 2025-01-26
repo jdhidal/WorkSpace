@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - qa
+      - diego
 
 jobs:
   build_and_deploy:
@@ -31,44 +31,48 @@ jobs:
         run: |
           # Validate the previous commit
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
-            echo "No previous commit found or invalid SHA. Skipping detection."
-            echo "changed_services=" >> $GITHUB_ENV
-            exit 0
+            echo "No previous commit found or invalid SHA. Considering current commit."
+            PREVIOUS_COMMIT="${{ github.sha }}"  # Si no hay commit previo, usamos el actual
+          else
+            PREVIOUS_COMMIT="${{ github.event.before }}"  # Usamos el commit previo
           fi
 
           # Detect changes
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          CHANGED_FILES=$(git diff --name-only $PREVIOUS_COMMIT ${{ github.sha }})
           echo "Changed files: $CHANGED_FILES"
+          
           CHANGED_SERVICES=()
-          for dir in */; do
-            if [ -d "$dir" ]; then
-              # Recorrer las subcarpetas dentro de cada carpeta de primer nivel
-              for service in "$dir"*/; do
-                if echo "$CHANGED_FILES" | grep -q "$service"; then
-                  CHANGED_SERVICES+=("$service")
-                fi
-              done
+          # Verificar cambios en subdirectorios específicos (User-management, etc.)
+          for dir in $(find . -type d -maxdepth 2); do
+            if echo "$CHANGED_FILES" | grep -q "$dir"; then
+              CHANGED_SERVICES+=("$dir")
             fi
           done
 
-          # Output changed services to environment variable
+          # Salida de los servicios cambiados a la variable de entorno
           if [ ${#CHANGED_SERVICES[@]} -eq 0 ]; then
             echo "No microservices changed."
             echo "changed_services=" >> $GITHUB_ENV
           else
             echo "Modified services: ${CHANGED_SERVICES[@]}"
             echo "changed_services=${CHANGED_SERVICES[*]}" >> $GITHUB_ENV
-          fi
 
       # Step 2: Build and Deploy changed services
       - name: Build and Deploy changed services
         run: |
-          # Iterate over changed services
-          for service in ${{ env.changed_services }}; do
+          # Verificar si hay servicios cambiados
+          if [ -z "${{ env.changed_services }}" ]; then
+            echo "No services to deploy."
+            exit 0
+          fi
+
+          # Iterar sobre los servicios cambiados
+          IFS=' ' read -r -a SERVICES <<< "${{ env.changed_services }}"
+          for service in "${SERVICES[@]}"; do
             if [ -d "$service" ]; then
               echo "Building and deploying $service..."
               cd $service
-              # Use DOCKER_USERNAME for image tagging
+              # Usar DOCKER_USERNAME para etiquetar la imagen
               IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service}:latest"
               docker build -t $IMAGE_NAME .
               docker push $IMAGE_NAME
