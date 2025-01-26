@@ -29,13 +29,21 @@ jobs:
       - name: Detect changed microservices
         id: changes
         run: |
-          # Obtiene los archivos modificados entre el commit previo y el actual
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          # Si no hay commit previo, se usa el HEAD de la rama actual
+          if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
+            echo "No previous commit found or invalid SHA. Considering current commit."
+            # Usamos HEAD para el diff con el commit actual
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          fi
+
+          echo "Changed files: $CHANGED_FILES"
           
-          # Inicializar una lista de servicios cambiados
+          # Inicializar lista de servicios modificados
           CHANGED_SERVICES=()
 
-          # Recorrer todas las carpetas de primer nivel (asumimos que cada microservicio está en una subcarpeta)
+          # Recorrer las carpetas de primer nivel (asumimos que cada microservicio está en una subcarpeta)
           for dir in */; do
             if [ -d "$dir" ]; then
               # Verificar si algún archivo dentro de esta carpeta fue modificado
