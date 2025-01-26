@@ -32,7 +32,7 @@ jobs:
           # Validate the previous commit
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Skipping detection."
-            echo "::set-output name=changed_services::"
+            echo "changed_services=" >> $GITHUB_ENV
             exit 0
           fi
 
@@ -46,20 +46,20 @@ jobs:
             fi
           done
 
-          # Output changed services
+          # Output changed services to environment variable
           if [ ${#CHANGED_SERVICES[@]} -eq 0 ]; then
             echo "No microservices changed."
-            echo "::set-output name=changed_services::"
+            echo "changed_services=" >> $GITHUB_ENV
           else
             echo "Modified services: ${CHANGED_SERVICES[@]}"
-            echo "::set-output name=changed_services::${CHANGED_SERVICES[@]}"
+            echo "changed_services=${CHANGED_SERVICES[*]}" >> $GITHUB_ENV
           fi
 
       # Step 2: Build and Deploy changed services
       - name: Build and Deploy changed services
         run: |
           # Iterate over changed services
-          for service in ${{ steps.changes.outputs.changed_services }}; do
+          for service in ${{ env.changed_services }}; do
             if [ -d "$service" ]; then
               echo "Building and deploying $service..."
               cd $service
@@ -67,6 +67,6 @@ jobs:
               IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service}:latest"
               docker build -t $IMAGE_NAME .
               docker push $IMAGE_NAME
-              cd -
+              cd - || exit
             fi
           done
