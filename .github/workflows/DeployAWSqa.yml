@@ -3,72 +3,73 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - diego
+      - diego  # Cambia 'diego' al nombre de la rama que estés usando si es necesario
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout del código
+      # Paso 1: Checkout del código
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Set up Docker
+      # Paso 2: Configurar Docker
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-      # Authenticate DockerHub
+      # Paso 3: Autenticación en DockerHub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      # Step 1: Detect changes to microservices folders
+      # Paso 4: Detectar cambios en las carpetas de microservicios
       - name: Detect changed microservices
         id: changes
         run: |
-          # Validate the previous commit
+          # Validar si hay un commit previo
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Considering current commit."
-            PREVIOUS_COMMIT="${{ github.sha }}"  # Si no hay commit previo, usamos el actual
+            echo "Changed files: ${CHANGED_FILES}"
           else
-            PREVIOUS_COMMIT="${{ github.event.before }}"  # Usamos el commit previo
+            echo "Changed files: $(git diff --name-only ${{ github.event.before }} ${{ github.sha }})"
           fi
 
-          # Detect changes
-          CHANGED_FILES=$(git diff --name-only $PREVIOUS_COMMIT ${{ github.sha }})
+          # Detectar archivos modificados
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           echo "Changed files: $CHANGED_FILES"
           
+          # Inicializar lista de servicios modificados
           CHANGED_SERVICES=()
-          # Verificar cambios en subdirectorios específicos (User-management, etc.)
-          for dir in $(find . -type d -maxdepth 2); do
-            if echo "$CHANGED_FILES" | grep -q "$dir"; then
-              CHANGED_SERVICES+=("$dir")
+
+          # Recorrer las carpetas de microservicios de primer nivel
+          for dir in */; do
+            if [ -d "$dir" ]; then
+              # Recorrer las subcarpetas dentro de cada carpeta de primer nivel
+              for service in "$dir"*/; do
+                if echo "$CHANGED_FILES" | grep -q "$service"; then
+                  CHANGED_SERVICES+=("$service")
+                fi
+              done
             fi
           done
 
-          # Salida de los servicios cambiados a la variable de entorno
+          # Output de servicios modificados a variable de entorno
           if [ ${#CHANGED_SERVICES[@]} -eq 0 ]; then
             echo "No microservices changed."
             echo "changed_services=" >> $GITHUB_ENV
           else
             echo "Modified services: ${CHANGED_SERVICES[@]}"
             echo "changed_services=${CHANGED_SERVICES[*]}" >> $GITHUB_ENV
-
-      # Step 2: Build and Deploy changed services
-      - name: Build and Deploy changed services
-        run: |
-          # Verificar si hay servicios cambiados
-          if [ -z "${{ env.changed_services }}" ]; then
-            echo "No services to deploy."
-            exit 0
           fi
 
+      # Paso 5: Construir y desplegar los microservicios modificados
+      - name: Build and Deploy changed services
+        run: |
           # Iterar sobre los servicios cambiados
-          IFS=' ' read -r -a SERVICES <<< "${{ env.changed_services }}"
-          for service in "${SERVICES[@]}"; do
+          for service in ${{ env.changed_services }}; do
             if [ -d "$service" ]; then
               echo "Building and deploying $service..."
               cd $service
