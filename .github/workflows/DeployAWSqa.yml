@@ -30,7 +30,7 @@ jobs:
         id: changes
         run: |
           # Validate the previous commit
-          if [ -z "${{ github.event.before }}" ] || ! git rev-parse ${{ github.event.before }} >/dev/null 2>&1; then
+          if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Skipping detection."
             echo "::set-output name=changed_services::"
             exit 0
