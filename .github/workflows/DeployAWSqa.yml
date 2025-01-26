@@ -29,11 +29,11 @@ jobs:
       - name: Detect changed microservices
         id: changes
         run: |
-          # Si no hay commit previo, se usa el HEAD de la rama actual
+          # Verificar si hay un commit previo
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Considering current commit."
-            # Usamos HEAD para el diff con el commit actual
-            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+            # Si no hay commit previo, trabajamos solo con HEAD
+            CHANGED_FILES=$(git diff --name-only HEAD)
           else
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           fi
