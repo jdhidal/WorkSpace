@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - diego  # Cambia 'diego' al nombre de la rama que estés usando si es necesario
+      - diego 
 
 jobs:
   build_and_deploy:
