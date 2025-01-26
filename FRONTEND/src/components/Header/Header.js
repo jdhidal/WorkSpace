@@ -2,15 +2,17 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './Header.css';
 
 const Header = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // Realizar la solicitud de logout al backend
     fetch('http://localhost:3003/logout', {
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include',  // Asegúrate de que las cookies se envíen correctamente
     })
       .then(response => response.json())
       .then(data => {

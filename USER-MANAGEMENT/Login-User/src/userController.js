@@ -32,7 +32,8 @@ class UserController {
           secure: false
         });
 
-        res.json({ message: 'Logged in successfully' });
+        res.json({ message: 'Logged in successfully', token });
+        
       } else {
         res.status(401).json({ message: 'Invalid credentials' });
       }

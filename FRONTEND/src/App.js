@@ -1,5 +1,8 @@
+// src/App.js
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 // Import Views of Front
 import LoginForm from './components/LoginForm/LoginForm';
 import CreateUserForm from './components/CreateUserForm/CreateUserForm';
@@ -13,7 +16,11 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LoginForm />} />
           <Route path="/create" element={<CreateUserForm />} />
-          <Route path="/main" element={<ProtectedRoute element={<MainPage />} />} />
+          
+          {/* Ruta protegida */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/main" element={<MainPage />} />
+          </Route>
         </Routes>
       </div>
     </Router>

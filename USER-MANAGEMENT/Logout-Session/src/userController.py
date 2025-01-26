@@ -1,5 +1,17 @@
 from flask import jsonify, request, make_response
-from service import clear_token_cookie
+
+
+def clear_token_cookie(response):
+    response.set_cookie(
+        'token', 
+        '', 
+        expires=0, 
+        path='/', 
+        httponly=True, 
+        samesite='Lax',  # Cambiar a Lax para desarrollo
+        secure=False      # Asegúrate de usar True en producción (HTTPS)
+    )
+
 
 def logout_user():
     # clean token and response
