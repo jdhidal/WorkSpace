@@ -29,10 +29,9 @@ jobs:
       - name: Detect changed microservices
         id: changes
         run: |
-          # Verificar si hay un commit previo
+          # Obtener la lista de archivos modificados entre los commits
           if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
             echo "No previous commit found or invalid SHA. Considering current commit."
-            # Si no hay commit previo, trabajamos solo con HEAD
             CHANGED_FILES=$(git diff --name-only HEAD)
           else
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
@@ -41,38 +40,34 @@ jobs:
           echo "Changed files: $CHANGED_FILES"
           
           # Inicializar lista de servicios modificados
-          CHANGED_SERVICES=()
+          CHANGED_SERVICES=""
 
-          # Recorrer las carpetas de primer nivel (asumimos que cada microservicio está en una subcarpeta)
+          # Recorrer todas las subcarpetas de nivel superior
           for dir in */; do
-            if [ -d "$dir" ]; then
-              # Verificar si algún archivo dentro de esta carpeta fue modificado
-              if echo "$CHANGED_FILES" | grep -q "$dir"; then
-                CHANGED_SERVICES+=("$dir")
-              fi
+            # Verificar si algún archivo dentro de la subcarpeta fue modificado
+            if echo "$CHANGED_FILES" | grep -q "^${dir}"; then
+              CHANGED_SERVICES="${CHANGED_SERVICES} ${dir}"
             fi
           done
 
-          # Output de servicios modificados a variable de entorno
-          if [ ${#CHANGED_SERVICES[@]} -eq 0 ]; then
+          # Registrar los servicios modificados en la salida
+          if [ -z "$CHANGED_SERVICES" ]; then
             echo "No microservices changed."
-            echo "changed_services=" >> $GITHUB_ENV
           else
-            echo "Modified services: ${CHANGED_SERVICES[@]}"
-            echo "changed_services=${CHANGED_SERVICES[*]}" >> $GITHUB_ENV
+            echo "Modified services: $CHANGED_SERVICES"
+          fi
+
+          # Exportar servicios modificados como variable de entorno
+          echo "changed_services=$CHANGED_SERVICES" >> $GITHUB_ENV
 
       # Paso 5: Construir y desplegar los microservicios modificados
       - name: Build and Deploy changed services
         run: |
-          # Iterar sobre los servicios que han cambiado
           for service in ${{ env.changed_services }}; do
-            if [ -d "$service" ]; then
-              echo "Building and deploying $service..."
-              cd $service
-              # Usar DOCKER_USERNAME para etiquetar la imagen
-              IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service}:latest"
-              docker build -t $IMAGE_NAME .
-              docker push $IMAGE_NAME
-              cd - || exit
-            fi
+            echo "Building and deploying $service..."
+            cd $service
+            IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${service%/}:latest"  # Eliminar barra final en el nombre
+            docker build -t $IMAGE_NAME .
+            docker push $IMAGE_NAME
+            cd - || exit
           done
