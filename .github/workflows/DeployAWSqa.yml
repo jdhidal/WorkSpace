@@ -43,7 +43,7 @@ jobs:
           CHANGED_SERVICES=""
 
           # Recorrer todas las subcarpetas de nivel superior
-          for dir in */*; do
+          for dir in */*/*/*; do
             # Verificar si algún archivo dentro de la subcarpeta fue modificado
             if echo "$CHANGED_FILES" | grep -q "^${dir}"; then
               CHANGED_SERVICES="${CHANGED_SERVICES} ${dir}"
