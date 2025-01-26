@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - diego  # Cambia 'diego' al nombre de la rama que estés usando si es necesario
+      - diego  # Cambia 'diego' por la rama correspondiente
 
 jobs:
   build_and_deploy:
@@ -25,33 +25,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      # Paso 4: Detectar cambios en las carpetas de microservicios
+      # Paso 4: Detectar subcarpetas modificadas
       - name: Detect changed microservices
         id: changes
         run: |
-          # Si no hay commit previo, se usa el HEAD de la rama actual
-          if [ -z "${{ github.event.before }}" ] || ! git cat-file -e ${{ github.event.before }} 2>/dev/null; then
-            echo "No previous commit found or invalid SHA. Considering current commit."
-            # Usamos HEAD para el diff con el commit anterior
-            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-          else
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          fi
-
-          echo "Changed files: $CHANGED_FILES"
+          # Obtiene los archivos modificados entre el commit previo y el actual
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           
-          # Inicializar lista de servicios modificados
+          # Inicializar una lista de servicios cambiados
           CHANGED_SERVICES=()
 
-          # Recorrer las carpetas de microservicios de primer nivel
+          # Recorrer todas las carpetas de primer nivel (asumimos que cada microservicio está en una subcarpeta)
           for dir in */; do
             if [ -d "$dir" ]; then
-              # Recorrer las subcarpetas dentro de cada carpeta de primer nivel
-              for service in "$dir"*/; do
-                if echo "$CHANGED_FILES" | grep -q "$service"; then
-                  CHANGED_SERVICES+=("$service")
-                fi
-              done
+              # Verificar si algún archivo dentro de esta carpeta fue modificado
+              if echo "$CHANGED_FILES" | grep -q "$dir"; then
+                CHANGED_SERVICES+=("$dir")
+              fi
             fi
           done
 
@@ -66,7 +56,7 @@ jobs:
       # Paso 5: Construir y desplegar los microservicios modificados
       - name: Build and Deploy changed services
         run: |
-          # Iterar sobre los servicios cambiados
+          # Iterar sobre los servicios que han cambiado
           for service in ${{ env.changed_services }}; do
             if [ -d "$service" ]; then
               echo "Building and deploying $service..."
