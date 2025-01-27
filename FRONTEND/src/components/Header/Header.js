@@ -9,7 +9,7 @@ const Header = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Llamar al backend para hacer logout
+    // call backend logout
     fetch('http://localhost:3003/logout', {
       method: 'POST',
       credentials: 'include', 
@@ -17,16 +17,22 @@ const Header = ({ onLogout }) => {
       .then(response => response.json())
       .then(data => {
         console.log(data.message);
-        onLogout(); // Ejecutar la función onLogout pasada como prop
+        onLogout(); // 
         
         window.location.reload();
       })
       .catch(error => console.error('Error:', error));
   };
 
+  const handleCreatePlaceRedirect = () => {
+    // Redirest Space Coworking
+    navigate('/create-place');
+  };
+
   return (
     <header className="header">
       <button className="button logout-button" onClick={handleLogout}>Logout</button>
+      <button className="button create-place-button" onClick={handleCreatePlaceRedirect}>Create Place</button>
     </header>
   );
 };

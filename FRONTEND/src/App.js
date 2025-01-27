@@ -8,6 +8,7 @@ import LoginForm from './components/LoginForm/LoginForm';
 import CreateUserForm from './components/CreateUserForm/CreateUserForm';
 import MainPage from './Pages/MainPage';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import CreatePlaceForm from './components/CreatePlaceForm/CreatePlaceForm';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           {/* Routes Proctected */}
           <Route element={<ProtectedRoute />}>
             <Route path="/main" element={<MainPage />} />
+            <Route path="/create-place" element={<CreatePlaceForm />} />
           </Route>
         </Routes>
       </div>
