@@ -1,13 +1,15 @@
 package resolvers
 
 import (
+	"fmt"
 	"reservation_management/cancel-reservation/db"
 	"reservation_management/cancel-reservation/models"
+	"time"
 
 	"github.com/graphql-go/graphql"
 )
 
-// CancelReservationMutation es la mutación para cancelar una reserva
+// CancelReservationMutation es la mutación para cancelar una reserva y luego eliminarla después de un tiempo
 var CancelReservationMutation = &graphql.Field{
 	Type: graphql.NewObject(graphql.ObjectConfig{
 		Name: "Reservation",
@@ -25,6 +27,8 @@ var CancelReservationMutation = &graphql.Field{
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		id := p.Args["id"].(int)
 		var reservation models.Reservation
+
+		// Buscar la reserva por su ID
 		if err := db.DB.First(&reservation, id).Error; err != nil {
 			return nil, err
 		}
@@ -34,6 +38,21 @@ var CancelReservationMutation = &graphql.Field{
 		if err := db.DB.Save(&reservation).Error; err != nil {
 			return nil, err
 		}
+
+		// Programar la eliminación de la reserva después de un tiempo (ejemplo: 24 horas)
+		go func() {
+			// Espera 24 horas antes de eliminar la reserva
+			time.Sleep(24 * time.Hour)
+
+			// Eliminar la reserva de la base de datos después del tiempo
+			if err := db.DB.Delete(&reservation).Error; err != nil {
+				fmt.Printf("Error al eliminar la reserva: %v\n", err)
+			} else {
+				fmt.Printf("Reserva con ID %d eliminada después de 24 horas.\n", reservation.ID)
+			}
+		}()
+
+		// Devolver la reserva cancelada
 		return reservation, nil
 	},
 }
