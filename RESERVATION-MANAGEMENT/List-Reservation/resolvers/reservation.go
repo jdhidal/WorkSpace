@@ -1,13 +1,14 @@
 package resolvers
 
 import (
+	"log"
 	"reservation-management/list-reservation/db"
 	"reservation-management/list-reservation/models"
 
 	"github.com/graphql-go/graphql"
 )
 
-// listReservations resolver para obtener todas las reservaciones
+// ListReservations resolver para obtener todas las reservaciones
 var ListReservations = &graphql.Field{
 	Type: graphql.NewList(graphql.NewObject(graphql.ObjectConfig{
 		Name: "Reservation",
@@ -19,9 +20,12 @@ var ListReservations = &graphql.Field{
 			"status":           &graphql.Field{Type: graphql.String},
 		},
 	})),
+
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		var reservations []models.Reservation
-		if err := db.DB.Find(&reservations).Error; err != nil {
+		err := db.DB.Find(&reservations).Error
+		if err != nil {
+			log.Printf("Error al obtener las reservaciones: %v", err)
 			return nil, err
 		}
 		return reservations, nil
