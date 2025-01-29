@@ -1,0 +1,11 @@
+# .gitignore
+.env
+*.sqlite3
+*.db
+*.log
+/vendor
+/bundle
+.idea
+.vscode
+*.swp
+*.swo
