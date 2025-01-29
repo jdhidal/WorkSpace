@@ -1,26 +1,20 @@
-# Usa la imagen oficial de Go
-FROM golang:1.19 AS build
+# Usamos una imagen base de Go
+FROM golang:1.18-alpine
 
-# Establece el directorio de trabajo
+# Directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copia los archivos al contenedor
+# Copiar los archivos del proyecto al contenedor
 COPY . .
 
-# Descarga las dependencias
+# Descargar las dependencias del proyecto (esto también maneja la creación de los binarios de Go)
 RUN go mod tidy
 
-# Compila el código
-RUN go build -o main .
-
-# Usa una imagen más ligera para la ejecución
-FROM gcr.io/distroless/base
-
-# Copia el binario compilado
-COPY --from=build /app/main /main
-
-# Expone el puerto
+# Exponer el puerto en el que se ejecutará el servidor (ajusta según el puerto que uses)
 EXPOSE 3010
 
-# Comando por defecto
-CMD ["/main"]
+# Construir la aplicación Go
+RUN go build -o main .
+
+# Comando para ejecutar el servidor Go
+CMD ["./main"]

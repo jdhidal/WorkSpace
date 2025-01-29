@@ -9,9 +9,16 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Cargar variables del archivo .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error al cargar el archivo .env: %v", err)
+	}
+
 	// Conectar a la base de datos
 	db.InitDB()
 	defer db.CloseDB()

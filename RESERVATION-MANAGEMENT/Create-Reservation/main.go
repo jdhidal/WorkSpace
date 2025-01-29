@@ -16,7 +16,21 @@ func main() {
 	db.InitDB()
 	defer db.CloseDB()
 
-	// Definir el esquema de GraphQL
+	// Definir una consulta vacía pero válida
+	query := graphql.NewObject(graphql.ObjectConfig{
+		Name: "Query",
+		Fields: graphql.Fields{
+			// Puedes definir un campo de consulta vacío si no planeas usarlo
+			"dummyField": &graphql.Field{
+				Type: graphql.String,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return "Dummy Data", nil
+				},
+			},
+		},
+	})
+
+	// Definir el esquema de GraphQL con la mutación
 	mutation := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
 		Fields: graphql.Fields{
@@ -25,7 +39,7 @@ func main() {
 	})
 
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query:    nil,
+		Query:    query, // Agrega la consulta con un campo válido
 		Mutation: mutation,
 	})
 	if err != nil {
