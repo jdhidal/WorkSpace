@@ -20,6 +20,7 @@ class GetCoworkingSpaces < Sinatra::Base
   use CoworkingRoutes
 
   set :port, 3005
+  set :bind, '0.0.0.0'
 
   get '/' do
     'API is running!'
