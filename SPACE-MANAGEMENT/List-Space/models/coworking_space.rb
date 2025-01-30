@@ -4,7 +4,8 @@ Dotenv.load
 
 class CoworkingSpace < ActiveRecord::Base
   def self.get_all_spaces
-    establish_connection(
+    # Establecer la conexión a la base de datos una sola vez
+    ActiveRecord::Base.establish_connection(
       adapter: 'postgresql',
       host: ENV['DB_HOST'],
       port: ENV['DB_PORT'],
@@ -14,6 +15,16 @@ class CoworkingSpace < ActiveRecord::Base
     )
 
     query = "SELECT * FROM get_all_coworking_spaces();"
-    connection.execute(query)
+    result = ActiveRecord::Base.connection.execute(query)
+
+    # Convert in format successful
+    result.map do |row|
+      {
+        id: row['id'],
+        name: row['name'],
+        description: row['description'],
+        photo: row['photo']
+      }
+    end
   end
 end
