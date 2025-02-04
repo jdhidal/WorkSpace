@@ -6,7 +6,7 @@ import Edificios from './Edificios.jpg';
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [spaces, setSpaces] = useState([]); 
+  const [spaces, setSpaces] = useState([]);
 
   const handleLogout = () => {
     navigate('/');
@@ -41,21 +41,38 @@ const MainPage = () => {
   }, []);
 
   const byteaToImageUrl = (bytea) => {
-  
-    // Velidate bytes
     if (!bytea || typeof bytea !== 'string') {
       console.error('Invalid photo data:', bytea);
-      return 'path_to_default_image'; 
+      return 'path_to_default_image';
     }
     const cleanedBytea = bytea.startsWith('\\x') ? bytea.slice(2) : bytea;
 
     if (!cleanedBytea) {
       return 'path_to_default_image';
     }
-  
+
     const imageUrl = `data:image/jpeg;base64,${cleanedBytea}`;
-  
+
     return imageUrl;
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3006/coworking_spaces/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // If elimation confirm, update Spaces Coworking
+      setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== id));
+      console.log('Espacio eliminado exitosamente');
+    } catch (error) {
+      console.error('Error eliminando el espacio:', error);
+    }
   };
 
   return (
@@ -86,6 +103,12 @@ const MainPage = () => {
                   <p>{space.description}</p>
                 </div>
                 <button className="reserve-button">Reservar</button>
+                <button
+                  className="delete-button"
+                  onClick={() => handleDelete(space.id)}
+                >
+                  Eliminar
+                </button>
               </div>
             ))}
           </div>

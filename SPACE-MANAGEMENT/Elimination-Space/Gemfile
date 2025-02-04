@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+gem 'sinatra'
+gem 'pg'
+gem 'dotenv'
+gem 'yaml'
+gem 'sinatra-contrib'
+gem 'rack-cors'
+gem 'rackup'
+gem 'puma'
