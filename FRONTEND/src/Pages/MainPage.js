@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import './MainPage.css'; // Import Styles
 import Edificios from './Edificios.jpg';
+import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal'; // Import el modal
+import { toast } from 'react-toastify'; // For Notifications
 
 const MainPage = () => {
   const navigate = useNavigate();
   const [spaces, setSpaces] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estatus modal enable
+  const [spaceToDelete, setSpaceToDelete] = useState(null); // Space elimanated in wait
 
   const handleLogout = () => {
     navigate('/');
@@ -56,9 +60,16 @@ const MainPage = () => {
     return imageUrl;
   };
 
-  const handleDelete = async (id) => {
+  const handleDeleteClick = (id) => {
+    setSpaceToDelete(id); // Save the ID the Space
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!spaceToDelete) return;
+
     try {
-      const response = await fetch(`http://localhost:3006/coworking_spaces/${id}`, {
+      const response = await fetch(`http://localhost:3006/coworking_spaces/${spaceToDelete}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -67,12 +78,19 @@ const MainPage = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // If elimation confirm, update Spaces Coworking
-      setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== id));
-      console.log('Espacio eliminado exitosamente');
+      // Update if elimated Space
+      setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== spaceToDelete));
+      setIsModalOpen(false); // Cerrar el modal
+      toast.success('Espacio eliminado exitosamente'); 
     } catch (error) {
       console.error('Error eliminando el espacio:', error);
+      toast.error('Error al eliminar el espacio'); 
     }
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false); // Close Modal
+    setSpaceToDelete(null); 
   };
 
   return (
@@ -103,9 +121,10 @@ const MainPage = () => {
                   <p>{space.description}</p>
                 </div>
                 <button className="reserve-button">Reservar</button>
+                {/* Botton Elimatad */}
                 <button
                   className="delete-button"
-                  onClick={() => handleDelete(space.id)}
+                  onClick={() => handleDeleteClick(space.id)}
                 >
                   Eliminar
                 </button>
@@ -117,6 +136,14 @@ const MainPage = () => {
       <footer className="main-page-footer">
         <p>Footer content-Add continue test 4</p>
       </footer>
+
+      {/* Modal Confirmations*/}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        message="¿Estás seguro de que deseas eliminar este espacio?"
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 # Front
 
-npm install react@18.3.1 react-dom@18.3.1 react-router-dom@6.26.1 react-scripts@5.0.1 axios@1.7.4 socket.io-client@4.7.5 js-cookie@3.0.5 graphql@16.9.0 graphql-request@7.1.0 serve@14.2.0 cross-env@7.0.3 --save-dev
+npm install react@18.3.1 react-dom@18.3.1 react-router-dom@6.26.1 react-scripts@5.0.1 axios@1.7.4 socket.io-client@4.7.5 js-cookie@3.0.5 graphql@16.9.0 graphql-request@7.1.0 serve@14.2.0 cross-env@7.0.3 --save-dev react-toastify
 
 
 

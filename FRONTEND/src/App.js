@@ -1,7 +1,7 @@
-// src/App.js
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Import Views of Front
 import LoginForm from './components/LoginForm/LoginForm';
@@ -18,12 +18,25 @@ const App = () => {
           <Route path="/" element={<LoginForm />} />
           <Route path="/create" element={<CreateUserForm />} />
           
-          {/* Routes Proctected */}
+          {/* Routes Protected */}
           <Route element={<ProtectedRoute />}>
             <Route path="/main" element={<MainPage />} />
             <Route path="/create-place" element={<CreatePlaceForm />} />
           </Route>
         </Routes>
+
+        {/* ToastContainer for notifications */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick 
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </Router>
   );
