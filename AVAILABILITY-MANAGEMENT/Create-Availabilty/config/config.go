@@ -29,12 +29,12 @@ func ConnectDB() {
 
 	DB, err = sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal("Error conectando a la base de datos:", err)
+		log.Fatal("Error Conect in DataBase:", err)
 	}
 
 	if err = DB.Ping(); err != nil {
-		log.Fatal("No se pudo hacer ping a la base de datos:", err)
+		log.Fatal("It can do ping in DataBases:", err)
 	}
 
-	fmt.Println("Conectado a PostgreSQL")
+	fmt.Println("Conect to PostgreSQL")
 }
