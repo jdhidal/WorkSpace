@@ -89,7 +89,7 @@ const AvailabilityForm = () => {
               <div>
                 <p>No hay disponibilidad para mostrar.</p>
                 <button className="create-availability-button" onClick={() => {
-                  navigate(`/crear-disponibilidad/${id}`, { state: { id, name, description } });
+                  navigate(`/crear-disponibilidad/`, { state: { id, name, description } });
                 }}>
                   Crear Disponibilidad
                 </button>

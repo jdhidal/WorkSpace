@@ -4,6 +4,7 @@ go get -u github.com/joho/godotenv
 go get -u github.com/lib/pq
 go get -u github.com/swaggo/swag/cmd/swag
 go install github.com/swaggo/swag/cmd/swag@latest
+go get -u github.com/gin-contrib/cors
 
 
 
