@@ -9,6 +9,7 @@ import CreateUserForm from './components/CreateUserForm/CreateUserForm';
 import MainPage from './Pages/MainPage';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import CreatePlaceForm from './components/CreatePlaceForm/CreatePlaceForm';
+import AvailabilityForm from './components/AvailabilityForm/AvailabilityForm';
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route element={<ProtectedRoute />}>
             <Route path="/main" element={<MainPage />} />
             <Route path="/create-place" element={<CreatePlaceForm />} />
+            <Route path="/availability-form" element={<AvailabilityForm />} />
           </Route>
         </Routes>
 

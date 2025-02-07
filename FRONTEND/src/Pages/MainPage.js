@@ -93,6 +93,12 @@ const MainPage = () => {
     setSpaceToDelete(null); 
   };
 
+  const handleDetailsClick = (space) => {
+    navigate('/availability-form', {
+      state: { id: space.id, name: space.name, description: space.description }
+    });
+  };
+
   return (
     <div className="main-page-container">
       <header className="main-page-header">
@@ -120,8 +126,12 @@ const MainPage = () => {
                   <h4>{space.name}</h4>
                   <p>{space.description}</p>
                 </div>
-                <button className="reserve-button">Reservar</button>
-                {/* Botton Elimatad */}
+                <button 
+                  className="reserve-button" 
+                  onClick={() => handleDetailsClick(space)}
+                >
+                  Detalles
+                </button>
                 <button
                   className="delete-button"
                   onClick={() => handleDeleteClick(space.id)}

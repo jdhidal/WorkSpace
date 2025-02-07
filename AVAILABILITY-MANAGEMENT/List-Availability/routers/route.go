@@ -5,19 +5,24 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-// SetupRouter configura las rutas para la API
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
-	// Ruta para obtener disponibilidades por coworkingSpaceID
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
+
 	router.GET("/availability/:coworkingSpaceID", func(c *gin.Context) {
-		// Obtener coworkingSpaceID de los parámetros
+
 		coworkingSpaceIDStr := c.Param("coworkingSpaceID")
 
-		// Convertir coworkingSpaceID de string a int
 		coworkingSpaceID, err := strconv.Atoi(coworkingSpaceIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -26,7 +31,6 @@ func SetupRouter() *gin.Engine {
 			return
 		}
 
-		// Llamar al modelo para obtener las disponibilidades
 		availabilities, err := models.GetAvailabilitiesByCoworkingSpaceID(coworkingSpaceID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -35,7 +39,6 @@ func SetupRouter() *gin.Engine {
 			return
 		}
 
-		// Retornar la respuesta en formato JSON
 		c.JSON(http.StatusOK, availabilities)
 	})
 

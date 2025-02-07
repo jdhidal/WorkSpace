@@ -1,0 +1,167 @@
+/* Contenedor principal */
+.availability-form-container {
+    padding: 20px;
+    background-color: #f4f4f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .availability-form-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .availability-form-header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .space-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .space-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .space-title h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .space-description {
+    font-size: 1rem;
+    color: #777;
+  }
+  
+  .availability-info {
+    margin-top: 20px;
+  }
+  
+  .availability-item {
+    margin-top: 20px;
+  }
+  
+  .availability-item-details {
+    background-color: #fafafa;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .availability-item-details p {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .availability-item-details strong {
+    color: #333;
+  }
+  
+  .status {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+  }
+  
+  .status svg {
+    margin-right: 8px;
+    font-size: 1.2rem;
+  }
+  
+  .status.available {
+    color: green;
+  }
+  
+  .status.occupied {
+    color: red;
+  }
+  
+  .notes {
+    background-color: #e9f7e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+  }
+  
+  .notes p {
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .availability-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .reserve-button,
+  .back-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .reserve-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .reserve-button:hover {
+    background-color: #45a049;
+  }
+  
+  .back-button {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+  
+  .back-button:hover {
+    background-color: #ddd;
+  }
+
+  
+  .create-availability-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .create-availability-button:hover {
+    background-color: #218838; 
+    transform: translateY(-2px); 
+  }
+  
+  .create-availability-button:focus {
+    outline: none; 
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
+  }
+  
+  .create-availability-button:active {
+    transform: translateY(1px);
+  }
