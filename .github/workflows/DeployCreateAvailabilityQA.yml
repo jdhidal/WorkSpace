@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "qa" ]
     paths:
-      - "AVAILABILITY-MANAGEMENT/Create-Availability/**"  # Cambios en esta carpeta activan el pipeline
+      - "AVAILABILITY-MANAGEMENT/Create-Availabilty/**"  # Cambios en esta carpeta activan el pipeline
 
 jobs:
   build-and-push:

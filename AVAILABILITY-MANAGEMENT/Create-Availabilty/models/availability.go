@@ -21,7 +21,7 @@ func CheckSpaceExists(coworkingSpaceID int) bool {
 	var exists bool
 	err := config.DB.QueryRow("SELECT check_space_exists($1)", coworkingSpaceID).Scan(&exists)
 	if err != nil {
-		log.Println("Error verificando existencia del espacio:", err)
+		log.Println("Error cerified exist Space:", err)
 		return false
 	}
 	return exists
