@@ -27,7 +27,7 @@ func SetupRouter() *gin.Engine {
 		}
 
 		if models.CheckSpaceExists(av.CoworkingSpaceID) {
-			c.JSON(http.StatusConflict, gin.H{"message": "Este espacio ya tiene disponibilidad registrada"})
+			c.JSON(http.StatusConflict, gin.H{"message": "Space pre-regestry"})
 			return
 		}
 
@@ -36,7 +36,7 @@ func SetupRouter() *gin.Engine {
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{"message": "Disponibilidad creada exitosamente"})
+		c.JSON(http.StatusCreated, gin.H{"message": "Create Availabilty Successfull"})
 	})
 
 	return r
