@@ -15,6 +15,6 @@ func main() {
 	if port == "" {
 		port = "3007"
 	}
-	fmt.Println("🚀 Servidor corriendo en el puerto", port)
+	fmt.Println("🚀 Run Service in port", port)
 	r.Run(":" + port)
 }
