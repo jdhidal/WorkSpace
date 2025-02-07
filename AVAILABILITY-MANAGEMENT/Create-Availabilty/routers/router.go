@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SetupRouter configura las rutas de la API
+// SetupRouter configure Routes
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
@@ -26,13 +26,11 @@ func SetupRouter() *gin.Engine {
 			return
 		}
 
-		// Verificar si el espacio ya tiene disponibilidad registrada
 		if models.CheckSpaceExists(av.CoworkingSpaceID) {
 			c.JSON(http.StatusConflict, gin.H{"message": "Este espacio ya tiene disponibilidad registrada"})
 			return
 		}
 
-		// Crear disponibilidad
 		if err := models.CreateAvailability(av); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
