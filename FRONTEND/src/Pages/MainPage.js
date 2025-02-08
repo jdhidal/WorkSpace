@@ -19,7 +19,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
-        const response = await fetch('http://localhost:3005/coworking_spaces', {
+        const response = await fetch('http://35.171.43.245:3005/coworking_spaces', {
           method: 'GET',
           credentials: 'include',
         });
