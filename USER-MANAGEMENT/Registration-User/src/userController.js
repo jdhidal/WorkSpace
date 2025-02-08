@@ -9,7 +9,7 @@ const createUser = async (req, res) => {
 
     const result = await createUserInDB(name, email, hashedPassword);
 
-    res.status(201).json({ message: 'User created successfully', rowsAffected: result.affectedRows });
+    res.status(201).json({ message: 'User created successfully tets', rowsAffected: result.affectedRows });
   } catch (err) {
     console.error('Error creating user:', err);
     res.status(500).json({ error: 'Error creating user' });
