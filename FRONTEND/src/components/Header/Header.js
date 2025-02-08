@@ -17,9 +17,9 @@ const Header = ({ onLogout }) => {
       .then(response => response.json())
       .then(data => {
         console.log(data.message);
-        //onLogout(); // 
+        onLogout();
         
-        //window.location.reload();
+        window.location.reload();
       })
       .catch(error => console.error('Error:', error));
   };
