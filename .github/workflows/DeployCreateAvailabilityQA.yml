@@ -1,4 +1,4 @@
-name: Build, Push, and Deploy Create Availability
+name: Build, Push, and Deploy Login-User
 
 on:
   push:
@@ -49,11 +49,11 @@ jobs:
         fi
 
         # 2) Generar el archivo .env en el servidor EC2
-        echo "DB_HOST=${{ secrets.DB_HOSTSPACE }}" > .env
-        echo "DB_USER=${{ secrets.DB_USERSPACE }}" >> .env
-        echo "DB_PASSWORD=${{ secrets.DB_PASSPACE }}" >> .env
-        echo "DB_NAME=${{ secrets.DB_NAMESAVAILABILITY }}" >> .env
-        echo "DB_PORT=${{ secrets.DB_PORTSPACE }}" >> .env
+        echo "DB_HOST=${{ secrets.DB_HOSTAVA }}" > .env
+        echo "DB_USER=${{ secrets.DB_USERAVA }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSAVA }}" >> .env
+        echo "DB_NAME=${{ secrets.DB_NAMESAVA }}" >> .env
+        echo "DB_PORT=${{ secrets.DB_PORTAVA }}" >> .env
 
         # 3) Detener y eliminar contenedor previo
         sudo docker stop create-availability-container || true
@@ -63,7 +63,7 @@ jobs:
         sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/create-availability:latest
 
         # 5) Ejecutar el contenedor con el .env
-        sudo docker run -d --env-file .env -p 3007:3007 --name create-availability-container ${{ secrets.DOCKERHUB_USERNAME }}/create-availability:latest
+        sudo docker run -d --env-file .env -p 3002:3002 --name create-availability-container ${{ secrets.DOCKERHUB_USERNAME }}/create-availability:latest
 
         # 6) Limpiar imágenes antiguas para ahorrar espacio
         sudo docker image prune -f
