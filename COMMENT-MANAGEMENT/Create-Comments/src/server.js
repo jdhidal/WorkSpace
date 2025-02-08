@@ -11,8 +11,10 @@ connectDB();
 
 // Middlewares
 app.use(express.json());
-app.use(require('cors')());
-app.use('/api/comentarios', comentarioRoutes);
+app.use(require('cors')());  // CORS habilitado
+
+// Cambiar la ruta de los comentarios
+app.use('/create-comments', comentarioRoutes);  // Nueva ruta
 
 // Iniciar servidor
 app.listen(PORT, () => {

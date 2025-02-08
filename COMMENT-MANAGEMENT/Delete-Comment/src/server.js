@@ -1,17 +1,22 @@
-require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const connectDB = require('./database');
-const commentsRoutes = require('./routes/CommentsRoutes');
+const comentarioRoutes = require('./routes/CommentsRoutes'); // Mantienes el mismo archivo de rutas
+require('dotenv').config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 3017;
 
 // Conectar a la base de datos
 connectDB();
 
-app.use('/api/comentarios', commentsRoutes);
+// Middlewares
+app.use(express.json());
+app.use(require('cors')());  // CORS habilitado
 
-const PORT = process.env.PORT || 3018;
-app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));
+// Cambiar la ruta a /delete-comments
+app.use('/delete-comments', comentarioRoutes);  // Aquí cambiamos la ruta
+
+// Iniciar servidor
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});
