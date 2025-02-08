@@ -6,7 +6,8 @@ def clear_token_cookie(response):
         'token', 
         '', 
         expires=0, 
-        path='/', 
+        path='/',
+        domain='100.27.128.132', 
         httponly=True, 
         samesite='Lax', 
         secure=False 
