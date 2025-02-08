@@ -8,8 +8,6 @@ RUN bundle install
 
 COPY . . 
 
-COPY .env /app/.env
-
 EXPOSE 3005
 
 CMD ["ruby", "app.rb"]
