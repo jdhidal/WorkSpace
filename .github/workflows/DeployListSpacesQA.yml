@@ -59,7 +59,7 @@ jobs:
 
     - name: Deploy Docker Container
       run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTUSER }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTSPACES }} << 'EOF'
         sudo docker stop list-space-container || true
         sudo docker rm list-space-container || true
         sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/list-space:latest
