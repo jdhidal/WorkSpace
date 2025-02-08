@@ -2,14 +2,15 @@ package resolvers
 
 import (
 	"fmt"
+	"net/http"
 	"reservation_management/cancel-reservation/db"
 	"reservation_management/cancel-reservation/models"
+	"strconv" // Asegúrate de importar strconv
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/handler"
 )
 
 // CancelReservationMutation es la mutación para cancelar una reserva y luego eliminarla después de un tiempo
@@ -60,43 +61,57 @@ var CancelReservationMutation = &graphql.Field{
 	},
 }
 
-func main() {
-	// Configurar CORS
+// SetupRouter es la función para configurar las rutas y habilitar CORS
+func SetupRouter() *gin.Engine {
 	router := gin.Default()
+
+	// Configuración de CORS
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},                   // Permitir el origen http://localhost:3000
-		AllowMethods:     []string{"GET", "POST"},                             // Métodos permitidos
+		AllowMethods:     []string{"GET", "POST", "DELETE"},                   // Métodos permitidos
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Encabezados permitidos
 		AllowCredentials: true,
 	}))
 
-	// Definir el esquema de GraphQL
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: nil, // Aquí agregas las consultas si las tienes
-		Mutation: graphql.NewObject(graphql.ObjectConfig{
-			Name: "Mutation",
-			Fields: graphql.Fields{
-				"cancelReservation": CancelReservationMutation,
-			},
-		}),
-	})
-	if err != nil {
-		fmt.Println("Error al crear el esquema de GraphQL:", err)
-		return
-	}
-
-	// Crear el manejador GraphQL
-	gqlHandler := handler.New(&handler.Config{
-		Schema: &schema,
-		Pretty: true,
+	// Ruta para la mutación de cancelar reserva
+	router.POST("/cancel-reservation", func(c *gin.Context) {
+		// Lógica para manejar las peticiones GraphQL
 	})
 
-	// Configurar el endpoint de GraphQL
-	router.POST("/cancel-reservation", gin.WrapH(gqlHandler))
+	// Ruta para eliminar una reserva (DELETE)
+	router.DELETE("/delete-reservation/:id", func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr) // Convertir idStr a un entero
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "El id debe ser un número entero válido",
+			})
+			return
+		}
 
-	// Iniciar el servidor en el puerto 3011
-	err = router.Run(":3011") // Cambiado a puerto 3011
-	if err != nil {
-		fmt.Println("Error al iniciar el servidor:", err)
-	}
+		var reservation models.Reservation
+
+		// Buscar la reserva por su ID
+		if err := db.DB.First(&reservation, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Reserva no encontrada",
+			})
+			return
+		}
+
+		// Eliminar la reserva
+		if err := db.DB.Delete(&reservation).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "No se pudo eliminar la reserva",
+			})
+			return
+		}
+
+		// Responder con éxito
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Reserva eliminada con éxito",
+		})
+	})
+
+	return router
 }
