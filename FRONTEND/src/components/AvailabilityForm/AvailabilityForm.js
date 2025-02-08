@@ -15,7 +15,7 @@ const AvailabilityForm = () => {
 
   useEffect(() => {
     if (id) {
-      axios.get(`http://localhost:3008/availability/${id}`, { withCredentials: true })
+      axios.get(`http://44.207.49.60:3008/availability/${id}`, { withCredentials: true })
         .then(response => {
           setAvailabilityData(response.data);
           setLoading(false);
@@ -30,7 +30,7 @@ const AvailabilityForm = () => {
   const handleDelete = async () => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta disponibilidad?")) {
       try {
-        await axios.delete(`http://localhost:3009/delete-availability/${id}`, { withCredentials: true });
+        await axios.delete(`http://44.207.49.60:3009/delete-availability/${id}`, { withCredentials: true });
         setAvailabilityData(null);
         alert("Disponibilidad eliminada con éxito");
       } catch (error) {
