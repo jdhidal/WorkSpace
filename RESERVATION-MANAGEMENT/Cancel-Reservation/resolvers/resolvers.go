@@ -2,10 +2,14 @@ package resolvers
 
 import (
 	"fmt"
+	"net/http"
 	"reservation_management/cancel-reservation/db"
 	"reservation_management/cancel-reservation/models"
+	"strconv" // Asegúrate de importar strconv
 	"time"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/graphql"
 )
 
@@ -55,4 +59,59 @@ var CancelReservationMutation = &graphql.Field{
 		// Devolver la reserva cancelada
 		return reservation, nil
 	},
+}
+
+// SetupRouter es la función para configurar las rutas y habilitar CORS
+func SetupRouter() *gin.Engine {
+	router := gin.Default()
+
+	// Configuración de CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},                   // Permitir el origen http://localhost:3000
+		AllowMethods:     []string{"GET", "POST", "DELETE"},                   // Métodos permitidos
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Encabezados permitidos
+		AllowCredentials: true,
+	}))
+
+	// Ruta para la mutación de cancelar reserva
+	router.POST("/cancel-reservation", func(c *gin.Context) {
+		// Lógica para manejar las peticiones GraphQL
+	})
+
+	// Ruta para eliminar una reserva (DELETE)
+	router.DELETE("/delete-reservation/:id", func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr) // Convertir idStr a un entero
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "El id debe ser un número entero válido",
+			})
+			return
+		}
+
+		var reservation models.Reservation
+
+		// Buscar la reserva por su ID
+		if err := db.DB.First(&reservation, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Reserva no encontrada",
+			})
+			return
+		}
+
+		// Eliminar la reserva
+		if err := db.DB.Delete(&reservation).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "No se pudo eliminar la reserva",
+			})
+			return
+		}
+
+		// Responder con éxito
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Reserva eliminada con éxito",
+		})
+	})
+
+	return router
 }
