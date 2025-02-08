@@ -6,8 +6,11 @@ COPY Gemfile Gemfile.lock ./
 
 RUN bundle install
 
-COPY . .
+COPY . . 
+
+COPY .env ./
 
 EXPOSE 3005
 
 CMD ["ruby", "app.rb"]
+
