@@ -1,0 +1,42 @@
+# src/swagger.yaml
+openapi: 3.0.0
+info:
+  title: User Authentication API
+  description: API for user login and authentication
+  version: 1.0.0
+paths:
+  /login:
+    post:
+      summary: Login a user
+      description: Logs in a user and generates a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: The email of the user.
+                password:
+                  type: string
+                  description: The password of the user.
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Logged in successfully'
+        '400':
+          description: Missing email or password
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Internal server error

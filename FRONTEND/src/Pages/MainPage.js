@@ -1,51 +1,103 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
-import Cookies from 'js-cookie';
-import io from 'socket.io-client';
-import axios from 'axios';
 import './MainPage.css'; // Import Styles
 import Edificios from './Edificios.jpg';
+import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal'; // Import el modal
+import { toast } from 'react-toastify'; // For Notifications
 
 const MainPage = () => {
-  const [messages, setMessages] = useState([]);
-  const [reservations, setReservations] = useState([]);
   const navigate = useNavigate();
+  const [spaces, setSpaces] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estatus modal enable
+  const [spaceToDelete, setSpaceToDelete] = useState(null); // Space elimanated in wait
 
   const handleLogout = () => {
     navigate('/');
   };
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    const fetchSpaces = async () => {
+      try {
+        const response = await fetch('http://35.171.43.245:3005/coworking_spaces', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-    const socket = io('https://microservice-websocket-30e27c571914.herokuapp.com', {
-      query: { token }
-    });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-      socket.emit('message', 'User connected');
-    });
+        const data = await response.json();
+        console.log('Datos recibidos:', data);
 
-    socket.on('message', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
-    });
-
-    return () => {
-      socket.disconnect();
+        if (data && Array.isArray(data)) {
+          setSpaces(data);
+        } else {
+          console.error('La API devolvió un formato inesperado:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching spaces:', error);
+      }
     };
+
+    fetchSpaces();
   }, []);
 
-  useEffect(() => {
-    axios.get('https://microservice-list-reservation-9e286342001c.herokuapp.com/reservations')
-      .then(response => setReservations(response.data))
-      .catch(error => console.error('Error fetching reservations:', error));
-  }, []);
+  const byteaToImageUrl = (bytea) => {
+    if (!bytea || typeof bytea !== 'string') {
+      console.error('Invalid photo data:', bytea);
+      return 'path_to_default_image';
+    }
+    const cleanedBytea = bytea.startsWith('\\x') ? bytea.slice(2) : bytea;
+
+    if (!cleanedBytea) {
+      return 'path_to_default_image';
+    }
+
+    const imageUrl = `data:image/jpeg;base64,${cleanedBytea}`;
+
+    return imageUrl;
+  };
+
+  const handleDeleteClick = (id) => {
+    setSpaceToDelete(id); // Save the ID the Space
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!spaceToDelete) return;
+
+    try {
+      const response = await fetch(`http://35.171.43.245:3006/coworking_spaces/${spaceToDelete}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Update if elimated Space
+      setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== spaceToDelete));
+      setIsModalOpen(false); // Cerrar el modal
+      toast.success('Espacio eliminado exitosamente'); 
+    } catch (error) {
+      console.error('Error eliminando el espacio:', error);
+      toast.error('Error al eliminar el espacio'); 
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false); // Close Modal
+    setSpaceToDelete(null); 
+  };
+
+  const handleDetailsClick = (space) => {
+    navigate('/availability-form', {
+      state: { id: space.id, name: space.name, description: space.description }
+    });
+  };
 
   return (
     <div className="main-page-container">
@@ -54,34 +106,54 @@ const MainPage = () => {
       </header>
       <main className="main-page-content">
         <div className="welcome-section">
-        <img src={Edificios} alt="Welcome" className="welcome-image" />
-          <h2>Welcome to SportCom!</h2>
+          <img src={Edificios} alt="Welcome" className="welcome-image" />
+          <div className="welcome-overlay"></div>
+          <div className="welcome-text">
+            <h2>Welcome to WorkSpace</h2>
+          </div>
         </div>
-        <h2>Current Reservation</h2>
-        <hr class="custom-line"></hr>
-        <section className="reservations-container">
-          {reservations.length > 0 ? (
-            reservations.map(reservation => (
-              <div className="reservation-card" key={reservation.id}>
-                <h3>{reservation.facility_name}</h3>
-                <p><strong>User:</strong> {reservation.user_name}</p>
-                <p><strong>Date:</strong> {reservation.reservation_date}</p>
-                <p><strong>Status:</strong> {reservation.status}</p>
+        <section className="coworking-spaces-section">
+          <h3>Available Coworking Spaces</h3>
+          <div className="spaces-grid">
+            {spaces.map((space) => (
+              <div key={space.id} className="space-card">
+                <img
+                  src={byteaToImageUrl(space.photo)}
+                  alt={space.name}
+                  className="space-image"
+                />
+                <div className="space-details">
+                  <h4>{space.name}</h4>
+                  <p>{space.description}</p>
+                </div>
+                <button 
+                  className="reserve-button" 
+                  onClick={() => handleDetailsClick(space)}
+                >
+                  Detalles
+                </button>
+                <button
+                  className="delete-button"
+                  onClick={() => handleDeleteClick(space.id)}
+                >
+                  Eliminar
+                </button>
               </div>
-            ))
-          ) : (
-            <p>No reservations found.</p>
-          )}
+            ))}
+          </div>
         </section>
-        <ul>
-          {messages.map((message, index) => (
-            <li key={index}>{message}</li>
-          ))}
-        </ul>
       </main>
       <footer className="main-page-footer">
         <p>Footer content-Add continue test 4</p>
       </footer>
+
+      {/* Modal Confirmations*/}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        message="¿Estás seguro de que deseas eliminar este espacio?"
+      />
     </div>
   );
 };

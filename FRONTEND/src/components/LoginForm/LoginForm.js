@@ -14,7 +14,7 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://microservice-login-b1831f0a3737.herokuapp.com/login', {
+      const response = await axios.post('http://100.27.128.132:3002/login', {
         email,
         password
       }, { withCredentials: true }); // Credential
@@ -30,7 +30,9 @@ const LoginForm = () => {
 
   return (
     <div className="form-wrapper">
-      <h2>Login I need 18 in supletory</h2>
+      <div class="centered-text">
+        <h2>Welcome to WorkSpace</h2>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="form-control">
           <input

@@ -1,0 +1,15 @@
+type Reservation {
+  id: ID!
+  facility_name: String!
+  user_name: String!
+  reservation_date: String!
+  status: String!
+}
+
+type Mutation {
+  createReservation(facility_name: String!, user_name: String!, reservation_date: String!, status: String!): Reservation
+}
+
+schema {
+  mutation: Mutation
+}

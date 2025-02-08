@@ -2,63 +2,37 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './Header.css';
 
 const Header = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    fetch('https://microservice-logout-55d935a07e7b.herokuapp.com/logout', {
+    // call backend logout
+    fetch('http://100.27.128.132:3003/logout', {
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include', 
     })
       .then(response => response.json())
       .then(data => {
         console.log(data.message);
         onLogout();
-        navigate('/');
+        
+        window.location.reload();
       })
       .catch(error => console.error('Error:', error));
   };
 
-  const goToFacilitiesForm = () => {
-    navigate('/facilities');
-  };
-
-  const goToReservationForm = () => {
-    navigate('/reservations');
-  };
-
-  const goToAvailabilityForm = () => {
-    navigate('/availability');
-  };
-
-  const goToAvailabilityLog = () => {
-    navigate('/availability-logs'); 
-  };
-
-  const goToFacilityLogs = () => {
-    navigate('/facility-logs');
-  };
-
-  const goToReservationLogs = () => {
-    navigate('/reservation-logs');
-  };
-
-  const goToUserLogs = () => {
-    navigate('/user-logs');
+  const handleCreatePlaceRedirect = () => {
+    // Redirest Space Coworking
+    navigate('/create-place');
   };
 
   return (
     <header className="header">
-      <button className="button" onClick={goToReservationForm}>Reservations</button>
-      <button className="button" onClick={goToFacilitiesForm}>Facilities</button>
-      <button className="button" onClick={goToAvailabilityForm}>Availability</button>
-      <button className="button" onClick={goToAvailabilityLog}>Availability Logs</button>
-      <button className="button" onClick={goToFacilityLogs}>Facility Logs</button>
-      <button className="button" onClick={goToReservationLogs}>Reservation Logs</button>
-      <button className="button" onClick={goToUserLogs}>User Logs</button>
       <button className="button logout-button" onClick={handleLogout}>Logout</button>
+      <button className="button create-place-button" onClick={handleCreatePlaceRedirect}>Create Place</button>
     </header>
   );
 };
