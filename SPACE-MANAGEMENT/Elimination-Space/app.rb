@@ -25,5 +25,5 @@ set :port, 3006
 set :bind, '0.0.0.0'
 
 get '/' do
-  'Elimination-Space API use Instances AWS'
+  'Elimination-Space API use Instances AWS 2'
 end

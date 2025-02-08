@@ -16,6 +16,6 @@ def clear_token_cookie(response):
 
 def logout_user():
     # clean token and response
-    response = make_response(jsonify({"message": "Logout successful in instances"}))
+    response = make_response(jsonify({"message": "Logout successful in instances test 2"}))
     clear_token_cookie(response)
     return response
