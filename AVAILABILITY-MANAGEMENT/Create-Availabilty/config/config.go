@@ -13,7 +13,7 @@ import (
 var DB *sql.DB
 
 func ConnectDB() {
-	err := godotenv.Load()
+	err := godotenv.Load("/app/.env", "/home/ec2-user/.env")
 	if err != nil {
 		log.Fatal("Error load .env")
 	}
