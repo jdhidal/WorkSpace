@@ -1,0 +1,68 @@
+name: Build, Push, and Deploy Create-Availability
+
+on:
+  push:
+    branches: [ "qa" ]
+    paths:
+      - "SPACE-MANAGEMENT/List-Space/**"  # Cambios en esta carpeta activan el pipeline
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/list-space:latest ./SPACE-MANAGEMENT/List-Space/
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/list-space:latest
+
+  deploy-aws:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set permissions for private key
+      run: |
+        echo "${{ secrets.AWS_EC2_KEY }}" > key.pem
+        chmod 600 key.pem
+
+    - name: Update system and install Docker if not present
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTSPACES }} << 'EOF'
+        # Update the system
+        sudo yum update -y
+
+        # Check if Docker is installed
+        if ! command -v docker &> /dev/null
+        then
+          echo "Docker not found, installing..."
+          sudo yum install -y docker
+          sudo systemctl start docker
+          sudo systemctl enable docker
+        else
+          echo "Docker is already installed."
+        fi
+
+        # Ensure Docker is running
+        sudo systemctl start docker
+        sudo systemctl enable docker
+        EOF
+
+    - name: Deploy Docker Container
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTUSER }} << 'EOF'
+        sudo docker stop list-space-container || true
+        sudo docker rm list-space-container || true
+        sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/list-space:latest
+        sudo docker run -d -p 3005:3005 --name list-space-container ${{ secrets.DOCKERHUB_USERNAME }}/list-space:latest
+        sudo docker image prune -f
+        EOF
