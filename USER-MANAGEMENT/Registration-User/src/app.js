@@ -23,5 +23,5 @@ app.post('/create', createUser);
 const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
-  console.log(`Service running on http://localhost:${port}`);
+  console.log(`Service running on Instances AWS http://localhost:${port}`);
 });
