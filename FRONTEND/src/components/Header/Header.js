@@ -10,7 +10,7 @@ const Header = ({ onLogout }) => {
 
   const handleLogout = () => {
     // call backend logout
-    fetch('http://localhost:3003/logout', {
+    fetch('http://100.27.128.132:3003/logout', {
       method: 'POST',
       credentials: 'include', 
     })
