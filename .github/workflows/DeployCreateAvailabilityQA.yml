@@ -37,7 +37,7 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTSPACES }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTAVAILABILITY }} << 'EOF'
         # 1) Actualizar el sistema e instalar Docker si no está presente
         sudo yum update -y
         if ! command -v docker &> /dev/null
