@@ -69,7 +69,7 @@ const MainPage = () => {
     if (!spaceToDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:3006/coworking_spaces/${spaceToDelete}`, {
+      const response = await fetch(`http://35.171.43.245:3006/coworking_spaces/${spaceToDelete}`, {
         method: 'DELETE',
         credentials: 'include',
       });
