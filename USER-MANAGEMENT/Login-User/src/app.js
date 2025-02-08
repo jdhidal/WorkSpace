@@ -35,5 +35,5 @@ app.post('/login', userController.login);
 
 const port = process.env.PORT || 3002;
 app.listen(port, () => {
-  console.log(`Authentication service running http://localhost:${port}`);
+  console.log(`Authentication service http://localhost:${port}`);
 });
