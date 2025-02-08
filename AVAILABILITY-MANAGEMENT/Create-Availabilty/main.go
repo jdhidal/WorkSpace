@@ -22,6 +22,6 @@ func main() {
 	if port == "" {
 		port = "3007"
 	}
-	fmt.Println("🚀 Run Service in port use Instance AWS test 6", port)
+	fmt.Println("🚀 Run Service in port use Instance AWS test 7", port)
 	r.Run(":" + port)
 }
