@@ -4,7 +4,7 @@ const comentarioRoutes = require('./routes/CommentsRoutes');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3017;
+const PORT = process.env.PORT || 3015;
 
 // Conectar a la base de datos
 connectDB();
