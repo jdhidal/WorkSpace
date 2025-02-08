@@ -67,6 +67,6 @@ def update_space(space_id, data):
     db.session.commit()
 
     return {
-        "message": "Space updated successfully",
+        "message": "Space updated successfully in instances",
         "space": {"id": space_id, "name": name, "description": description, "photo": photo_binary} 
     }

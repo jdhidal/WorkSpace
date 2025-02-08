@@ -59,7 +59,7 @@ jobs:
         sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/createupdate-space:latest
 
         # 5) Ejecutar el contenedor con el .env
-        sudo docker run -d --env-file .env -p 3005:3005 --name createupdate-space-container ${{ secrets.DOCKERHUB_USERNAME }}/createupdate-space:latest
+        sudo docker run -d --env-file .env -p 3004:3004 --name createupdate-space-container ${{ secrets.DOCKERHUB_USERNAME }}/createupdate-space:latest
 
         # 6) Limpiar imágenes antiguas para ahorrar espacio
         sudo docker image prune -f

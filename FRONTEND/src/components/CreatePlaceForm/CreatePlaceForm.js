@@ -30,7 +30,7 @@ const CreatePlaceForm = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3004/api/space/', formData, {
+      const response = await axios.post('http://35.171.43.245:3004/api/space/', formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data', 
