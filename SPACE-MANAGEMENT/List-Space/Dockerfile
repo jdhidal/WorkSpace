@@ -8,7 +8,7 @@ RUN bundle install
 
 COPY . . 
 
-COPY .env ./
+COPY .env /app/.env
 
 EXPOSE 3005
 
