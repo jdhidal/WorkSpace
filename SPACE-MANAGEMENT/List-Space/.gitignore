@@ -1,5 +1,6 @@
 # .gitignore
 
+.env
 *.sqlite3
 *.db
 *.log
