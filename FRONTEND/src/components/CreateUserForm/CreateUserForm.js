@@ -16,7 +16,7 @@ const CreateUserForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3001/create', {
+      const response = await axios.post('http://100.27.128.132:3001/create', {
         name,
         email,
         password
