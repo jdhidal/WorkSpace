@@ -1,4 +1,4 @@
-name: Build, Push, and Deploy Login-User
+name: Build, Push, and Deploy Create Availability
 
 on:
   push:
@@ -38,6 +38,8 @@ jobs:
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTAVAILABILITY }} << 'EOF'
+        set -e  # Detener script si hay errores
+
         # 1) Actualizar el sistema e instalar Docker si no está presente
         sudo yum update -y
         if ! command -v docker &> /dev/null
@@ -48,14 +50,20 @@ jobs:
           sudo systemctl enable docker
         fi
 
-        # 2) Generar el archivo .env en el servidor EC2
-        echo "DB_HOST=${{ secrets.DB_HOSTAVA }}" > .env
-        echo "DB_USER=${{ secrets.DB_USERAVA }}" >> .env
-        echo "DB_PASSWORD=${{ secrets.DB_PASSAVA }}" >> .env
-        echo "DB_NAME=${{ secrets.DB_NAMESAVA }}" >> .env
-        echo "DB_PORT=${{ secrets.DB_PORTAVA }}" >> .env
+        # 2) Generar el archivo .env en /home/ec2-user/.env
+        echo "DB_HOST=${{ secrets.DB_HOSTAVA }}" > /home/ec2-user/.env
+        echo "DB_USER=${{ secrets.DB_USERAVA }}" >> /home/ec2-user/.env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSAVA }}" >> /home/ec2-user/.env
+        echo "DB_NAME=${{ secrets.DB_NAMESAVA }}" >> /home/ec2-user/.env
+        echo "DB_PORT=${{ secrets.DB_PORTAVA }}" >> /home/ec2-user/.env
 
-        # 3) Detener y eliminar contenedor previo
+        # Asegurar permisos correctos para .env
+        chmod 600 /home/ec2-user/.env
+
+        # Verificar contenido del archivo .env
+        cat /home/ec2-user/.env
+
+        # 3) Detener y eliminar contenedor previo si existe
         sudo docker stop create-availability-container || true
         sudo docker rm create-availability-container || true
 
