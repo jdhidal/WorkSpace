@@ -23,7 +23,7 @@ class GetCoworkingSpaces < Sinatra::Base
   set :bind, '0.0.0.0'
 
   get '/' do
-    'API is running succesfull!'
+    'API is running succesfull now Instance AWS!'
   end
 end
 
