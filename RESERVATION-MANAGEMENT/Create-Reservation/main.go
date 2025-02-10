@@ -53,7 +53,7 @@ func main() {
 	})
 
 	// Levantar el servidor
-	http.Handle("/graphql", h)
+	http.Handle("/create-reservation", h)
 	fmt.Println("Servidor corriendo en puerto 3010...")
 	log.Fatal(http.ListenAndServe(":3010", nil))
 }
