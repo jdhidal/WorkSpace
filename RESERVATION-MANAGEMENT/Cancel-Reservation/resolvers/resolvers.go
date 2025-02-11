@@ -79,7 +79,7 @@ func SetupRouter() *gin.Engine {
 	})
 
 	// Ruta para eliminar una reserva (DELETE)
-	router.DELETE("/delete-reservation/:id", func(c *gin.Context) {
+	router.DELETE("/cancel-reservation/:id", func(c *gin.Context) {
 		idStr := c.Param("id")
 		id, err := strconv.Atoi(idStr) // Convertir idStr a un entero
 		if err != nil {
