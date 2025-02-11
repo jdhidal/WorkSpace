@@ -9,10 +9,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3019;
 
-// Configuración de CORS
 app.use(cors());
 
-// Definir el WSDL (Web Services Description Language)
 const wsdl = `<?xml version="1.0" encoding="UTF-8"?>
 <definitions name="RoleService"
     targetNamespace="http://localhost:3019/update-role"
@@ -52,21 +50,18 @@ const wsdl = `<?xml version="1.0" encoding="UTF-8"?>
     </service>
 </definitions>`;
 
-// Servicio SOAP
 const service = {
     RoleService: {
         RoleServicePort: {
             updateRole: (args, callback) => {
                 const { role, id } = args;
 
-                // Verificar si el id y el role son válidos
                 if (!id || !role) {
                     callback({ status: 'Error: id y role son requeridos' });
                     return;
                 }
 
-                // Actualizar el nombre del rol en la base de datos
-                const query = 'UPDATE roles SET nombre = ? WHERE id = ?'; // Cambié 'userId' por 'id'
+                const query = 'UPDATE roles SET nombre = ? WHERE id = ?';
                 db.query(query, [role, id], (err, result) => {
                     if (err) {
                         callback({ status: `Error al actualizar el rol: ${err.message}` });
@@ -81,7 +76,6 @@ const service = {
     }
 };
 
-// Crear el servidor SOAP
 app.listen(port, () => {
     soap.listen(app, '/update-role', service, wsdl);
     console.log(`Microservicio escuchando en http://localhost:${port}`);
