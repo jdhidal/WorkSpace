@@ -1,10 +1,10 @@
-name: Build, Push, and Deploy List-Role
+name: Build, Push, and Deploy Delete-Role
 
 on:
   push:
     branches: [ "qa" ]
     paths:
-      - "ROLES-MANAGEMENT/List-Role/**"  # Cambios en esta carpeta activan el pipeline
+      - "ROLES-MANAGEMENT/Delete-Role/**"  # Cambios en esta carpeta activan el pipeline
 
 jobs:
   build-and-push:
@@ -22,8 +22,8 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-role:latest ./ROLES-MANAGEMENT/List-Role/
-        docker push ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-role:latest
+        docker build -t ${{ secrets.DOCKERHUB_USERNAMEKE }}/delete-role:latest ./ROLES-MANAGEMENT/Delete-Role/
+        docker push ${{ secrets.DOCKERHUB_USERNAMEKE }}/delete-role:latest
 
   deploy-aws:
     needs: build-and-push
@@ -55,14 +55,14 @@ jobs:
         echo "DB_NAME=${{ secrets.DB_NAMEROLE }}" >> .env
 
         # 3) Detener y eliminar contenedor previo
-        sudo docker stop list-role-container || true
-        sudo docker rm list-role-container || true
+        sudo docker stop delete-role-container || true
+        sudo docker rm delete-role-container || true
 
         # 4) Descargar la nueva imagen desde Docker Hub
-        sudo docker pull ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-role:latest
+        sudo docker pull ${{ secrets.DOCKERHUB_USERNAMEKE }}/delete-role:latest
 
         # 5) Ejecutar el contenedor con el .env
-        sudo docker run -d --env-file .env -p 3020:3020 --name list-role-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-role:latest
+        sudo docker run -d --env-file .env -p 3018:3018 --name delete-role-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/delete-role:latest
 
         # 6) Limpiar imágenes antiguas para ahorrar espacio
         sudo docker image prune -f
