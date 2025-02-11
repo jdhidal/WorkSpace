@@ -6,7 +6,6 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns="http://schemas.xmlsoap.org/wsdl/">
 
-    <!-- Definir los mensajes de solicitud y respuesta -->
     <message name="UpdateRoleRequest">
         <part name="role" type="xsd:string"/>
         <part name="userId" type="xsd:int"/>
@@ -16,7 +15,6 @@
         <part name="status" type="xsd:string"/>
     </message>
 
-    <!-- Definir el portType con la operación updateRole -->
     <portType name="RoleServicePortType">
         <operation name="updateRole">
             <input message="tns:UpdateRoleRequest"/>
@@ -24,7 +22,6 @@
         </operation>
     </portType>
 
-    <!-- Definir el binding para el servicio SOAP -->
     <binding name="RoleServiceBinding" type="tns:RoleServicePortType">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="updateRole">
@@ -38,7 +35,6 @@
         </operation>
     </binding>
 
-    <!-- Definir el servicio y el puerto -->
     <service name="RoleService">
         <port name="RoleServicePort" binding="tns:RoleServiceBinding">
             <soap:address location="http://localhost:3019/update-role"/>
