@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 import './CreateUserForm.css';
@@ -7,9 +7,24 @@ const CreateUserForm = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Alumno');
+  const [role, setRole] = useState('');
+  const [roles, setRoles] = useState([]);
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); 
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('http://34.237.185.147:3020/list-role');
+        setRoles(response.data.roles);  // Set the roles array
+        setRole(response.data.roles[0]?.nombre);  // Set the default role if available
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,8 +87,15 @@ const CreateUserForm = () => {
         {/* Nueva lista desplegable para elegir el rol */}
         <div className="form-control">
           <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="Profesor">Profesor</option>
-            <option value="Alumno">Alumno</option>
+            {roles.map((roleItem) => (
+              <option
+                key={roleItem.id}
+                value={roleItem.nombre}
+                disabled={roleItem.nombre === 'Administrator'} // Disable the "Administrador" role
+              >
+                {roleItem.nombre}
+              </option>
+            ))}
           </select>
           <label>Select your Role</label>
         </div>
