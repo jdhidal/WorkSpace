@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  title: Comment Management API
+  description: API for managing comments.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3016
+paths:
+  /list-comments:
+    get:
+      summary: "Get a list of all comments"
+      description: "Retrieve a list of all comments stored in the database."
+      operationId: "getComments"
+      responses:
+        200:
+          description: "A list of comments"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "Name of the person who made the comment"
+                      example: "John Doe"
+                    comment:
+                      type: string
+                      description: "The content of the comment"
+                      example: "This is a comment"
+        500:
+          description: "Internal Server Error"

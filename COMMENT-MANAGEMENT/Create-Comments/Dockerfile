@@ -1,20 +1,20 @@
-# Usa una imagen ligera de Node.js
-FROM node:18-alpine
+# Utilizamos una imagen oficial de Node.js como base
+FROM node:20
 
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
+# Crear un directorio de trabajo para la aplicación
+WORKDIR /usr/src/app
 
-# Copia los archivos de package.json y package-lock.json
+# Copiar los archivos de tu proyecto a la imagen de Docker
 COPY package*.json ./
 
-# Instala las dependencias
+# Instalar las dependencias
 RUN npm install
 
-# Copia el resto del código al contenedor
+# Copiar el resto de los archivos del proyecto al contenedor
 COPY . .
 
-# Expone el puerto en el que corre el microservicio
-EXPOSE 3017
+# Exponer el puerto que usará la aplicación (en este caso 3015)
+EXPOSE 3015
 
-# Comando para ejecutar el servidor
-CMD ["node", "src/server.js"]
+# Iniciar la aplicación
+CMD ["node", "index.js"]

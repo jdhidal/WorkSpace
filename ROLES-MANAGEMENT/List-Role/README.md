@@ -40,13 +40,10 @@ npm install
 
 Make sure to have a `.env` file in the root directory of your project. Example:
 
-```env
-DB_HOST=create-role.c4u33yi9malf.us-east-1.rds.amazonaws.com
-DB_USERNAME=admin
-DB_PASSWORD=UCentral2899
-DB_NAME=roles_management
-PORT=3020
-```
+   DB_HOST=your-database-hostname
+   DB_USERNAME=your-database-username
+   DB_PASSWORD=your-database-password
+   DB_NAME=roles_management
 
 Adjust the environment variables according to your database configuration.
 
@@ -96,9 +93,4 @@ This endpoint returns a list of all roles stored in the database.
     }
   ]
 }
-```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 ```
