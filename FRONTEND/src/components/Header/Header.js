@@ -29,10 +29,16 @@ const Header = ({ onLogout }) => {
     navigate('/create-place');
   };
 
+  const handleCreateRoleRedirect = () => {
+    navigate('/create-role');
+  };
+
+
   return (
     <header className="header">
       <button className="button logout-button" onClick={handleLogout}>Logout</button>
       <button className="button create-place-button" onClick={handleCreatePlaceRedirect}>Create Place</button>
+      <button className="button create-role-button" onClick={handleCreateRoleRedirect}>Create Roles</button>
     </header>
   );
 };
