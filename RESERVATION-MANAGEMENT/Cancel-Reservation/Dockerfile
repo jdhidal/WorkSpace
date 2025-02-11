@@ -1,32 +1,38 @@
-# Usa una imagen base de Go
-FROM golang:1.20-alpine as builder
+# Usa una imagen base de Go 1.23.0 para construir la aplicación
+FROM golang:1.23.0-alpine AS builder
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copia go.mod y go.sum para aprovechar el caché de Docker y evitar la descarga de dependencias cada vez
+# Copia archivos necesarios para manejar dependencias
 COPY go.mod go.sum ./
 
 # Descarga las dependencias de Go
-RUN go mod tidy
+RUN go mod download
 
-# Copia el código fuente de la aplicación en el contenedor
+# Copia el código fuente de la aplicación
 COPY . .
 
-# Construye la aplicación
+# Copia el archivo .env al contenedor
+COPY .env ./
+
+# Compila la aplicación en un binario optimizado
 RUN go build -o main .
 
-# Usa una imagen base de Alpine para la parte final (sin el entorno de desarrollo de Go)
+# Usa una imagen base mínima para producción
 FROM alpine:latest
 
-# Instala las dependencias necesarias (por ejemplo, para el uso de MySQL si es necesario)
+# Instala certificados necesarios
 RUN apk --no-cache add ca-certificates
 
-# Copia el archivo binario desde el contenedor de la fase de construcción
-COPY --from=builder /app/main /usr/local/bin/
+# Copia el binario desde la fase de construcción
+COPY --from=builder /app/main /usr/local/bin/main
 
-# Expón el puerto donde se ejecutará el servidor
+# Copia el archivo .env al contenedor de producción (si es necesario)
+COPY --from=builder /app/.env /app/.env
+
+# Define el puerto de exposición
 EXPOSE 3011
 
 # Comando para ejecutar la aplicación
-CMD ["main"]
+CMD ["/usr/local/bin/main"]
