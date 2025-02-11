@@ -18,11 +18,6 @@ app.use(express.json());  // Para manejar JSON en las solicitudes
 app.post('/create-role', (req, res) => {
   const { role } = req.body; // Recibe el rol desde el cuerpo de la solicitud
 
-  // Validar que el rol sea válido
-  if (!role || !['estudiante', 'profesor', 'administrador'].includes(role)) {
-    return res.status(400).send('Role no válido');
-  }
-
   // SQL para insertar el rol en la base de datos
   const query = 'INSERT INTO roles (nombre) VALUES (?)';  // Usamos "nombre" en lugar de "role_name"
 

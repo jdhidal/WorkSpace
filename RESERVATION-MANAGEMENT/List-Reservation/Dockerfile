@@ -1,5 +1,5 @@
-# Usa una imagen base de Go
-FROM golang:1.20-alpine AS builder
+# Usa una imagen base de Go 1.21
+FROM golang:1.21-alpine AS builder
 
 # Configura el directorio de trabajo en el contenedor
 WORKDIR /app
@@ -8,8 +8,11 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copia el archivo .env al contenedor
+COPY .env ./
+
 # Copia el código fuente al contenedor
-COPY . .
+COPY . ./
 
 # Construye el binario de la aplicación
 RUN go build -o main .
@@ -22,6 +25,9 @@ RUN apk --no-cache add ca-certificates
 
 # Copia el binario desde el contenedor de construcción
 COPY --from=builder /app/main /app/main
+
+# Copia el archivo .env desde el contenedor de construcción
+COPY --from=builder /app/.env /app/.env
 
 # Exponer el puerto donde estará disponible el servidor
 EXPOSE 3012
