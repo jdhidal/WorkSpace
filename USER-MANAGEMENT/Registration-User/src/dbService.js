@@ -1,4 +1,3 @@
-// dbService.js
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
@@ -9,11 +8,11 @@ const dbConfig = {
   database: process.env.DB_DATABASE
 };
 
-const createUserInDB = async (name, email, hashedPassword) => {
+const createUserInDB = async (name, email, hashedPassword, role) => {
   const connection = await mysql.createConnection(dbConfig);
   const [result] = await connection.execute(
-    'CALL sp_createUser(?, ?, ?)', 
-    [name, email, hashedPassword]
+    'CALL sp_createUser(?, ?, ?, ?)',
+    [name, email, hashedPassword, role]
   );
   await connection.end();
   return result;

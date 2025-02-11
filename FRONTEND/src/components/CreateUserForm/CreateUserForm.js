@@ -1,5 +1,3 @@
-// src/components/CreateUserForm/CreateUserForm.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
@@ -9,6 +7,7 @@ const CreateUserForm = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('Alumno');
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); 
 
@@ -19,7 +18,8 @@ const CreateUserForm = () => {
       const response = await axios.post('http://100.27.128.132:3001/create', {
         name,
         email,
-        password
+        password,
+        role
       });
       setMessage(response.data.message);
       navigate('/'); 
@@ -68,6 +68,16 @@ const CreateUserForm = () => {
           />
           <label>Enter your new Password</label>
         </div>
+
+        {/* Nueva lista desplegable para elegir el rol */}
+        <div className="form-control">
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="Profesor">Profesor</option>
+            <option value="Alumno">Alumno</option>
+          </select>
+          <label>Select your Role</label>
+        </div>
+
         <button type="submit">Register</button>
         <button onClick={() => navigate('/')}>Cancel</button> {/* Redirect Login*/}
       </form>
