@@ -45,11 +45,10 @@ npm install
 ### 3. Set up environment variables
 Create a `.env` file in the root directory and add:
 ```env
-DB_HOST=create-role.c4u33yi9malf.us-east-1.rds.amazonaws.com
-DB_USERNAME=admin
-DB_PASSWORD=UCentral2899
-DB_NAME=roles_management
-PORT=3018
+   DB_HOST=your-database-hostname
+   DB_USERNAME=your-database-username
+   DB_PASSWORD=your-database-password
+   DB_NAME=roles_management
 ```
 
 ### 4. Start the server
@@ -82,6 +81,4 @@ docker build -t delete-role-service .
 docker run -p 3018:3018 --env-file .env delete-role-service
 ```
 
-## License
-This project is licensed under the MIT License.
 

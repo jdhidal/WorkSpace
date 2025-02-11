@@ -158,5 +158,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **API Endpoints**: Provides details on the available `POST /create-role` endpoint.
 - **Testing**: Shows how to test the API using **Postman** or **cURL**.
 - **Notes**: Information about connecting to the database and the limited functionality of the microservice.
-  
-You can customize this `README.md` further if needed, depending on your project structure or requirements. Let me know if you need any changes!

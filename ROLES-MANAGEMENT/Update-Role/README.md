@@ -39,14 +39,11 @@ npm install
 
 Create a `.env` file in the root directory and add your database connection details:
 
-```env
-DB_HOST=create-role.c4u33yi9malf.us-east-1.rds.amazonaws.com
-DB_USERNAME=admin
-DB_PASSWORD=UCentral2899
-DB_NAME=roles_management
-PORT=3019
-```
-
+   DB_HOST=your-database-hostname
+   DB_USERNAME=your-database-username
+   DB_PASSWORD=your-database-password
+   DB_NAME=roles_management
+   
 Ensure that the MySQL database exists and has the `roles_management` schema. You can create the database and table with the following SQL:
 
 ```sql
