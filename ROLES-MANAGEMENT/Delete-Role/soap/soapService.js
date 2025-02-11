@@ -1,7 +1,6 @@
 const { Client } = require('soap');
-const url = 'http://www.example.com/soap?wsdl'; // URL del servicio SOAP
+const url = 'http://www.example.com/soap?wsdl'; 
 
-// Función que consulta el servicio SOAP para eliminar un rol
 function deleteRoleSOAP(roleId, callback) {
   Client.createClient(url, (err, client) => {
     if (err) return callback(err, null);
