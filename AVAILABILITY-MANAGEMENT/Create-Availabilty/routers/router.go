@@ -13,7 +13,7 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"http://44.218.54.250:3000"},
 		AllowMethods:     []string{"POST"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
