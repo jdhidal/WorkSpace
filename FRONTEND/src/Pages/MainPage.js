@@ -130,7 +130,7 @@ const MainPage = () => {
 
   const handleDetailsClick = (space) => {
     navigate('/availability-form', {
-      state: { id: space.id, name: space.name, description: space.description }
+      state: { id: space.id, name: space.name, description: space.description, nameuser: userRole?.name}
     });
   };
 
