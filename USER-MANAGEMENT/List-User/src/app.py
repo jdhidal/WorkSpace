@@ -4,10 +4,8 @@ from routes import user_routes
 
 app = Flask(__name__)
 
-# Configurar CORS
-CORS(app, resources={r"/users/<email>": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, resources={r"/users/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
-# Registrar rutas
 app.register_blueprint(user_routes)
 
 if __name__ == "__main__":

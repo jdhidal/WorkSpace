@@ -1,22 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import './MainPage.css'; // Import Styles
 import Edificios from './Edificios.jpg';
 import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal'; // Import el modal
 import { toast } from 'react-toastify'; // For Notifications
+import axios from 'axios'; // Import axios para hacer peticiones
 
 const MainPage = () => {
   const navigate = useNavigate();
   const [spaces, setSpaces] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Estatus modal enable
   const [spaceToDelete, setSpaceToDelete] = useState(null); // Space elimanated in wait
+  const [userRole, setUserRole] = useState(null);
+  
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email);
 
   const handleLogout = () => {
     navigate('/');
   };
 
   useEffect(() => {
+    if (!email) {
+      navigate('/');
+    }
+  }, [email, navigate]);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3014/users/${email}`);
+        setUserRole(response.data.role);
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+
     const fetchSpaces = async () => {
       try {
         const response = await fetch('http://35.171.43.245:3005/coworking_spaces', {
@@ -41,8 +61,9 @@ const MainPage = () => {
       }
     };
 
+    fetchUserRole();
     fetchSpaces();
-  }, []);
+  }, [email]);
 
   const byteaToImageUrl = (bytea) => {
     if (!bytea || typeof bytea !== 'string') {
@@ -80,7 +101,7 @@ const MainPage = () => {
 
       // Update if elimated Space
       setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== spaceToDelete));
-      setIsModalOpen(false); // Cerrar el modal
+      setIsModalOpen(false);
       toast.success('Espacio eliminado exitosamente'); 
     } catch (error) {
       console.error('Error eliminando el espacio:', error);
@@ -102,7 +123,7 @@ const MainPage = () => {
   return (
     <div className="main-page-container">
       <header className="main-page-header">
-        <Header onLogout={handleLogout} />
+        <Header email={email || 'Usuario'} onLogout={handleLogout} />
       </header>
       <main className="main-page-content">
         <div className="welcome-section">
@@ -132,12 +153,14 @@ const MainPage = () => {
                 >
                   Detalles
                 </button>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDeleteClick(space.id)}
-                >
-                  Eliminar
-                </button>
+                {userRole === 'Administrator' && (
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDeleteClick(space.id)}
+                  >
+                    Eliminar
+                  </button>
+                )}
               </div>
             ))}
           </div>

@@ -10,13 +10,10 @@ def get_user_by_email(email):
         cursor = conn.cursor(dictionary=True)
         
         try:
-            # Llamada al procedimiento almacenado
             cursor.callproc("GetUserByEmail", [email])
-
-            # Obtenemos el resultado del procedimiento
             user = None
             for result in cursor.stored_results():
-                user = result.fetchone()  # Esperamos solo un usuario
+                user = result.fetchone()
 
             if user:
                 return jsonify(user)
@@ -25,7 +22,6 @@ def get_user_by_email(email):
         except Exception as e:
             return jsonify({"error": f"Error al ejecutar la consulta: {str(e)}"}), 500
         finally:
-            # Asegurarnos de cerrar el cursor y la conexión
             cursor.close()
             conn.close()
     return jsonify({"error": "Error en la conexión a la base de datos"}), 500
