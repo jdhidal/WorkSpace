@@ -15,7 +15,7 @@ const CreateRoleForm = () => {
 
   const fetchRoles = async () => {
     try {
-      const response = await axios.get('http://34.237.185.147:3020/list-roles');
+      const response = await axios.get('http://34.237.185.147:3020/list-role');
       setRoles(response.data.roles);
     } catch (error) {
       console.error('Error al obtener los roles:', error);
@@ -45,8 +45,10 @@ const CreateRoleForm = () => {
   };
 
   const handleEdit = async (id, newName) => {
+    if (!newName) return; // If no name is provided, don't send the request
+
     try {
-      await axios.put(`http://34.237.185.147:3017/edit-role/${id}`, { role: newName });
+      await axios.put(`http://34.237.185.147:3019/update-role/${id}`, { role: newName });
       fetchRoles();
     } catch (error) {
       console.error('Error editando el rol:', error);
@@ -55,7 +57,7 @@ const CreateRoleForm = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://34.237.185.147:3017/delete-role/${id}`);
+      await axios.delete(`http://34.237.185.147:3018/delete-role/${id}`);
       fetchRoles();
     } catch (error) {
       console.error('Error eliminando el rol:', error);
@@ -79,36 +81,40 @@ const CreateRoleForm = () => {
         </div>
 
         <button type="submit">Crear Rol</button>
-        <button type="button" onClick={() => navigate('/main')}>Cancelar</button>
+        <button type="button" onClick={() => navigate('/main')}>Regresar</button>
       </form>
+      
       {message && <p>{message}</p>}
-
-      <table className="role-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre del Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {roles.map((roleItem) => (
-            <tr key={roleItem.id}>
-              <td>{roleItem.id}</td>
-              <td>
-                <input
-                  type="text"
-                  defaultValue={roleItem.nombre}
-                  onBlur={(e) => handleEdit(roleItem.id, e.target.value)}
-                />
-              </td>
-              <td>
-                <button onClick={() => handleDelete(roleItem.id)}>Eliminar</button>
-              </td>
+      
+      <div className="table-container">
+        <table className="role-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre del Rol</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {roles.map((roleItem) => (
+              <tr key={roleItem.id}>
+                <td>{roleItem.id}</td>
+                <td>
+                  <input
+                    type="text"
+                    defaultValue={roleItem.nombre}
+                    onBlur={(e) => handleEdit(roleItem.id, e.target.value)}
+                  />
+                </td>
+                <td>
+                  <button onClick={() => handleDelete(roleItem.id)}>Eliminar</button>
+                  <button onClick={() => handleEdit(roleItem.id, roleItem.nombre)}>Actualizar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
