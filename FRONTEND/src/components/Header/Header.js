@@ -51,6 +51,10 @@ const Header = ({ email, onLogout }) => {
     navigate('/create-role');
   };
 
+  const handleViewReservationRedirect = () => {
+    navigate('/reservation-form');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -77,6 +81,9 @@ const Header = ({ email, onLogout }) => {
             </button>
             <button className="button create-role-button" onClick={handleCreateRoleRedirect}>
               Create Roles
+            </button>
+            <button className="button create-role-button" onClick={handleViewReservationRedirect}>
+              View Reservations
             </button>
           </>
         )}

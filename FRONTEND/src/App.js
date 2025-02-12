@@ -13,6 +13,7 @@ import CreatePlaceForm from './components/CreatePlaceForm/CreatePlaceForm';
 import AvailabilityForm from './components/AvailabilityForm/AvailabilityForm';
 import CreateAvailabilityForm from './components/CreateAvailabilityForm/CreateAvailabilityForm';
 import CreateRoleForm from './components/CreateRoleForm/CreateRoleForm';
+import ReservationForm from './components/ReservationForm/ReservationForm';
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/availability-form" element={<AvailabilityForm />} />
             <Route path="/crear-disponibilidad" element={<CreateAvailabilityForm />} />
             <Route path="/create-role" element={<CreateRoleForm />} />
+            <Route path="/reservation-form" element={<ReservationForm />} />
           </Route>
         </Routes>
 

@@ -54,10 +54,10 @@ const AvailabilityForm = () => {
       `,
       variables: {
         input: {
-          facility_name: name,  // El nombre del espacio
-          user_name: nameuser,   // El nombre del usuario
-          reservation_date: new Date().toISOString().split('T')[0],  // Fecha actual en formato YYYY-MM-DD
-          status: "activo"       // Estado predeterminado
+          facility_name: name,
+          user_name: nameuser,
+          reservation_date: new Date().toISOString().split('T')[0],
+          status: "activo" 
         }
       }
     };
@@ -68,6 +68,7 @@ const AvailabilityForm = () => {
       });
       console.log('Reserva realizada con éxito:', response.data);
       alert("Reserva realizada con éxito");
+      navigate('/main');
     } catch (error) {
       console.error('Error al realizar la reserva:', error);
       alert("Error al realizar la reserva");
