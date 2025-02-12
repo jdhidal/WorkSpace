@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaCheckCircle, FaTimesCircle, FaTrash } from 'react-icons/fa';
+import io from 'socket.io-client';  // Importa socket.io-client
 import './AvailabilityForm.css';
 
 const AvailabilityForm = () => {
@@ -12,6 +13,9 @@ const AvailabilityForm = () => {
   const [availabilityData, setAvailabilityData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Conexión al WebSocket
+  const socket = io('http://44.218.54.250:3013');  // Dirección de tu servidor WebSocket
 
   useEffect(() => {
     if (id) {
@@ -25,6 +29,23 @@ const AvailabilityForm = () => {
           setLoading(false);
         });
     }
+
+    // Escuchar eventos de WebSocket
+    socket.on('availability-updated', (message) => {
+      console.log(message);  // Mensaje recibido, puedes mostrarlo si quieres
+      alert('¡Disponibilidad actualizada!');
+    });
+
+    socket.on('reservation-made', (message) => {
+      console.log(message);  // Mensaje recibido, puedes mostrarlo si quieres
+      alert('¡Reserva realizada con éxito!');
+    });
+
+    // Limpiar eventos al desmontarse el componente
+    return () => {
+      socket.off('availability-updated');
+      socket.off('reservation-made');
+    };
   }, [id]);
 
   const handleDelete = async () => {
@@ -33,6 +54,10 @@ const AvailabilityForm = () => {
         await axios.delete(`http://44.207.49.60:3009/delete-availability/${id}`, { withCredentials: true });
         setAvailabilityData(null);
         alert("Disponibilidad eliminada con éxito");
+
+        // Emitir un evento a través del WebSocket para notificar que la disponibilidad fue eliminada
+        socket.emit('delete-availability', { id, name });
+
       } catch (error) {
         alert("Error al eliminar la disponibilidad");
       }
@@ -69,6 +94,10 @@ const AvailabilityForm = () => {
       await axios.post(`http://44.207.49.60:3011/reduce-capacity/${id}`, { withCredentials: true });
       console.log('Reserva realizada con éxito:', response.data);
       alert("Reserva realizada con éxito");
+
+      // Emitir un evento a través del WebSocket para notificar que se realizó una reserva
+      socket.emit('reserve-space', { id, name, user_name: nameuser });
+
       navigate('/main');
     } catch (error) {
       console.error('Error al realizar la reserva:', error);
