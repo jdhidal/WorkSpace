@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "qa" ]
     paths:
-      - "RESERVATION-MANAGEMENT/Create-Reservation/**"  # Cambios en esta carpeta activan el pipeline
+      - "RESERVATION-MANAGEMENT/Create-Reservation/**"
 
 jobs:
   build-and-push:
@@ -30,41 +30,62 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set permissions for private key
+    - name: Configure SSH
       run: |
-        echo "${{ secrets.AWS_EC2_KEYKE }}" > key.pem
-        chmod 600 key.pem
+        mkdir -p ~/.ssh
+        echo "${{ secrets.AWS_EC2_KEYKE }}" | base64 --decode > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan ${{ secrets.AWS_EC2_HOSTRESERVATION }} >> ~/.ssh/known_hosts
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTRESERVATION }} << 'EOF'
-        # 1) Actualizar el sistema e instalar Docker si no está presente
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.AWS_EC2_HOSTRESERVATION }} << 'EOF'
+        set -e  # Si algún comando falla, el script se detiene
+
+        echo "🚀 [1] Actualizando sistema e instalando Docker si es necesario..."
         sudo yum update -y
-        if ! command -v docker &> /dev/null
-        then
-          echo "Docker no encontrado, instalando..."
+        command -v docker &> /dev/null || {
+          echo "⚠️ Docker no encontrado. Instalando..."
           sudo yum install -y docker
           sudo systemctl start docker
           sudo systemctl enable docker
-        fi
+        }
 
-        # 2) Detener y eliminar contenedor previo
+        echo "🛑 [2] Eliminando contenedor anterior si existe..."
         sudo docker stop create-reservation-container || true
         sudo docker rm create-reservation-container || true
 
-        # 3) Descargar la nueva imagen desde Docker Hub
+        echo "⬇️ [3] Descargando la última imagen desde Docker Hub..."
         sudo docker pull ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
 
-        # 4) Ejecutar el contenedor pasando las variables de entorno directamente
-        sudo docker run -d \
+        echo "🔍 [4] Verificando conectividad con la base de datos..."
+        if ! nc -zv ${{ secrets.DB_HOSTRESERVATION }} ${{ secrets.DB_PORTRESERVATION }}; then
+          echo "❌ Error: No se pudo conectar a la base de datos en ${{ secrets.DB_HOSTRESERVATION }}:${{ secrets.DB_PORTRESERVATION }}"
+          exit 1
+        fi
+
+        echo "🚀 [5] Ejecutando el contenedor..."
+        sudo docker run -d --name create-reservation-container \
           -e DB_HOST=${{ secrets.DB_HOSTRESERVATION }} \
           -e DB_PORT=${{ secrets.DB_PORTRESERVATION }} \
           -e DB_USER=${{ secrets.DB_USERRESERVATION }} \
           -e DB_PASSWORD=${{ secrets.DB_PASSRESERVATION }} \
           -e DB_NAME=${{ secrets.DB_NAMERESERVATION }} \
           -p 3010:3010 \
-          --name create-reservation-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
+          ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest || {
+            echo "❌ Error: El contenedor no se pudo iniciar."
+            exit 1
+          }
 
-        # 5) Limpiar imágenes antiguas para ahorrar espacio
+        echo "🔍 [6] Verificando que el contenedor esté corriendo..."
+        sudo docker ps -a | grep create-reservation-container || {
+          echo "❌ Error: El contenedor no está corriendo."
+          sudo docker logs create-reservation-container || echo "No hay logs disponibles."
+          exit 1
+        }
+
+        echo "🧹 [7] Limpiando imágenes antiguas..."
         sudo docker image prune -f
+
+        echo "✅ ¡Despliegue completado exitosamente!"
         EOF

@@ -39,20 +39,17 @@ func main() {
 	})
 
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query:    query, // Agrega la consulta con un campo válido
+		Query:    query,
 		Mutation: mutation,
 	})
 	if err != nil {
 		log.Fatalf("Error creando el esquema de GraphQL: %v", err)
 	}
 
-	// Crear el handler para GraphQL
 	h := handler.New(&handler.Config{
 		Schema: &schema,
 		Pretty: true,
 	})
-
-	// Levantar el servidor
 	http.Handle("/create-reservation", h)
 	fmt.Println("Servidor corriendo en puerto 3010...")
 	log.Fatal(http.ListenAndServe(":3010", nil))
