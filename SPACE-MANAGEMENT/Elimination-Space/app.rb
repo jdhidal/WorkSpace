@@ -10,7 +10,7 @@ require_relative './routes/coworking_space_routes'
 
 use Rack::Cors do
   allow do
-    origins 'http://localhost:3000'
+    origins 'http://44.218.54.250:3000'
     resource '*',
     headers: :any,
     methods: [:delete],
