@@ -47,11 +47,35 @@ const CreateRoleForm = () => {
   const handleEdit = async (id, newName) => {
     if (!newName) return; // If no name is provided, don't send the request
 
+    // Crear el XML en formato SOAP
+    const soapBody = `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:web="http://34.237.185.147:3019/update-role">
+        <soapenv:Header/>
+        <soapenv:Body>
+            <web:updateRole>
+              <role>administrator</role>
+              <id>4</id>
+            </web:updateRole>
+        </soapenv:Body>
+      </soapenv:Envelope>
+    `;
+
+    // Enviar la solicitud SOAP con axios
     try {
-      await axios.put(`http://34.237.185.147:3019/update-role/${id}`, { role: newName });
-      fetchRoles();
+      const response = await axios.post('http://34.237.185.147:3019/update-role', soapBody, {
+        headers: {
+          'Content-Type': 'text/xml',  // Asegurarse de que sea tipo XML
+        },
+      });
+
+      console.log('Respuesta de la solicitud SOAP:', response.data);
+      setMessage('Rol actualizado con éxito');
+      fetchRoles(); // Refrescar roles después de la actualización
     } catch (error) {
-      console.error('Error editando el rol:', error);
+      console.error('Error al actualizar el rol:', error);
+      setMessage('Error al actualizar el rol');
     }
   };
 
