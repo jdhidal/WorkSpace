@@ -1,4 +1,4 @@
-name: Build, Push, and Deploy Create Reservation
+name: Build, Push, and Deploy Create-Reservation
 
 on:
   push:
@@ -48,23 +48,22 @@ jobs:
           sudo systemctl enable docker
         fi
 
-        # 2) Detener y eliminar contenedor previo
+        # 2) Generar el archivo .env en el servidor EC2
+        echo "DB_USER=${{ secrets.DB_USERRESERVATION }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSRESERVATION }}" >> .env        
+        echo "DB_HOST=${{ secrets.DB_HOSTRESERVATION }}" > .env
+        echo "DB_NAME=${{ secrets.DB_NAMERESERVATION   }}" >> .env
+
+        # 3) Detener y eliminar contenedor previo
         sudo docker stop create-reservation-container || true
         sudo docker rm create-reservation-container || true
 
-        # 3) Descargar la nueva imagen desde Docker Hub
+        # 4) Descargar la nueva imagen desde Docker Hub
         sudo docker pull ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
 
-        # 4) Ejecutar el contenedor pasando las variables de entorno directamente
-        sudo docker run -d \
-          -e DB_HOST=${{ secrets.DB_HOSTRESERVATION }} \
-          -e DB_PORT=${{ secrets.DB_PORTRESERVATION }} \
-          -e DB_USER=${{ secrets.DB_USERRESERVATION }} \
-          -e DB_PASSWORD=${{ secrets.DB_PASSRESERVATION }} \
-          -e DB_NAME=${{ secrets.DB_NAMERESERVATION }} \
-          -p 3010:3010 \
-          --name create-reservation-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
+        # 5) Ejecutar el contenedor con el .env
+        sudo docker run -d --env-file .env -p 3010:300 --name create-reservation-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
 
-        # 5) Limpiar imágenes antiguas para ahorrar espacio
+        # 6) Limpiar imágenes antiguas para ahorrar espacio
         sudo docker image prune -f
         EOF
