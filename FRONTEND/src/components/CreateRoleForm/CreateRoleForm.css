@@ -1,4 +1,4 @@
-/* public/css/StylesCreateUser.css */
+/* Public/css/StylesCreateUser.css */
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap");
 
@@ -8,7 +8,6 @@
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
 }
-
 
 nav {
     position: fixed;
@@ -151,14 +150,14 @@ form .form-help :where(label, a) {
     padding: 16px 0;
     background-color: #121220;
     color: #fff;
-    text-decoration: none; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .button-link:hover {
-    background: rgb(124, 196, 32, 0.5); 
+    background: rgb(124, 196, 32, 0.5);
 }
 
 @media (max-width: 740px) {
@@ -184,7 +183,6 @@ form .form-help :where(label, a) {
     }
 }
 
-
 .social-icons {
     list-style: none;
     padding: 0;
@@ -200,17 +198,17 @@ form .form-help :where(label, a) {
     display: block;
     width: 30px;
     height: 30px;
-    background-color: #121220; 
+    background-color: #121220;
     text-align: center;
     line-height: 30px;
-    color: #77bc20; 
+    color: #77bc20;
     text-decoration: none;
     border-radius: 50%;
     transition: background-color 0.3s ease;
 }
 
 .social-icons a:hover {
-    background-color: #555; 
+    background-color: #555;
 }
 
 .footer-container {
@@ -218,4 +216,63 @@ form .form-help :where(label, a) {
     color: #fff;
     padding: 20px;
     text-align: center;
+}
+
+/* Table Styling */
+.role-table-container {
+    margin-top: 60px; /* Separar tabla del formulario */
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.1); /* Fondo similar al formulario */
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.role-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.role-table th,
+.role-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.role-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.role-table td {
+    background-color: #f9f9f9;
+}
+
+.role-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="text"]:focus {
+    border-color: #007bff;
+}
+
+table button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    background-color: #ffc107;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+table button:hover {
+    background-color: #e0a800;
 }

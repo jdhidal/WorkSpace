@@ -9,6 +9,6 @@ app.use(express.json());
 
 app.use('/delete-role', roleRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Microservicio corriendo en el puerto ${process.env.PORT}`);
+app.listen(process.env.PORT || 3018, () => {
+  console.log(`Microservice run in ${process.env.PORT || 3018}`);
 });
