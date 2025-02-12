@@ -19,7 +19,7 @@ app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 def swagger_yaml():
     return send_from_directory('.', 'swagger.yaml')
 
-CORS(app, resources={r"/logout": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, resources={r"/logout": {"origins": "http://44.218.54.250:3000"}}, supports_credentials=True)
 
 # Endpoint of logout
 @app.route('/logout', methods=['POST'])
