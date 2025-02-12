@@ -66,6 +66,7 @@ const AvailabilityForm = () => {
       const response = await axios.post('http://13.216.135.117:3010/create-reservation', reservationData, {
         headers: { 'Content-Type': 'application/json' },
       });
+      await axios.post(`http://44.207.49.60:3011/reduce-capacity/${id}`, { withCredentials: true });
       console.log('Reserva realizada con éxito:', response.data);
       alert("Reserva realizada con éxito");
       navigate('/main');
