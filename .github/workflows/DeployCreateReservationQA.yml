@@ -60,9 +60,12 @@ jobs:
 
         # 4) Descargar la nueva imagen desde Docker Hub
         sudo docker pull ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
+        
+        sudo docker cp .env create-reservation-container:/app/.env
+
 
         # 5) Ejecutar el contenedor con el .env
-        sudo docker run -d --env-file .env -p 3010:300 --name create-reservation-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
+        sudo docker run -d --env-file .env -p 3010:3010 --name create-reservation-container ${{ secrets.DOCKERHUB_USERNAMEKE }}/create-reservation:latest
 
         # 6) Limpiar imágenes antiguas para ahorrar espacio
         sudo docker image prune -f
