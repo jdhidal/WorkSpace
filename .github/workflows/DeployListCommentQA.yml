@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "qa" ]
     paths:
-      - "COMMENT-MANAGEMENT/List-Comments/**"
+      - "COMMENT-MANAGEMENT/List-Comment/**"
 
 jobs:
   build-and-push:
@@ -22,7 +22,7 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-comments:latest ./COMMENT-MANAGEMENT/List-Commen/
+        docker build -t ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-comments:latest ./COMMENT-MANAGEMENT/List-Comment/
         docker push ${{ secrets.DOCKERHUB_USERNAMEKE }}/list-comments:latest
 
   deploy-aws:
