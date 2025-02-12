@@ -16,6 +16,10 @@ const MainPage = () => {
 
   const [email, setEmail] = useState(localStorage.getItem('userEmail'));
 
+  // Estado para manejar los comentarios
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+
   const handleLogout = () => {
     localStorage.removeItem('userEmail'); // Borrar el email del localStorage
     navigate('/');
@@ -31,7 +35,7 @@ const MainPage = () => {
     const fetchUserRole = async () => {
       try {
         const response = await axios.get(`http://100.27.128.132:3014/users/${email}`);
-        setUserRole(response.data.role);
+        setUserRole(response.data);
       } catch (error) {
         console.error('Error fetching user role:', error);
       }
@@ -61,8 +65,19 @@ const MainPage = () => {
       }
     };
 
+    // Fetch comments from the API
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get('http://35.175.25.214:3016/list-comments');
+        setComments(response.data); // Set the comments in state
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
     fetchUserRole();
     fetchSpaces();
+    fetchComments();
   }, [email]);
 
   const byteaToImageUrl = (bytea) => {
@@ -77,7 +92,6 @@ const MainPage = () => {
     }
 
     const imageUrl = `data:image/jpeg;base64,${cleanedBytea}`;
-
     return imageUrl;
   };
 
@@ -120,11 +134,52 @@ const MainPage = () => {
     });
   };
 
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) {
+      toast.error('El comentario no puede estar vacío');
+      return;
+    }
+
+    if (!userRole?.name) {
+      toast.error('No se pudo obtener el nombre del usuario');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://35.175.25.214:3015/create-comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: userRole.name,      // Usamos userRole.name
+          comment: newComment.trim() // Usamos el comentario que se escribió
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Comentario enviado con éxito:', data);
+        // Actualizamos los comentarios en la UI
+        setComments((prevComments) => [...prevComments, { name: userRole.name, comment: newComment }]);
+        setNewComment(""); // Limpiar el comentario después de enviarlo
+        toast.success('Comentario enviado');
+      } else {
+        console.error('Error al enviar el comentario:', data);
+        toast.error('Error al enviar el comentario');
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+      toast.error('Error al enviar el comentario');
+    }
+  };
+
   return (
     <div className="main-page-container">
       <header className="main-page-header">
         <Header email={email} onLogout={handleLogout} />
       </header>
+      
       <main className="main-page-content">
         <div className="welcome-section">
           <img src={Edificios} alt="Welcome" className="welcome-image" />
@@ -133,6 +188,7 @@ const MainPage = () => {
             <h2>Welcome to WorkSpace</h2>
           </div>
         </div>
+  
         <section className="coworking-spaces-section">
           <h3>Available Coworking Spaces</h3>
           <div className="spaces-grid">
@@ -153,7 +209,7 @@ const MainPage = () => {
                 >
                   Detalles
                 </button>
-                {userRole === 'Administrator' && (
+                {userRole?.role === 'Administrator' && (
                   <button
                     className="delete-button"
                     onClick={() => handleDeleteClick(space.id)}
@@ -165,12 +221,42 @@ const MainPage = () => {
             ))}
           </div>
         </section>
+
+        <hr className="section-divider" />
+  
+        {/* Comment Section */}
+        <section className="comments-section">
+          <h3>Comentarios</h3>
+          
+          {/* Lista de comentarios */}
+          <div className="comments-list">
+            {comments.map((comment, index) => (
+              <div key={index} className="comment-card">
+                <p><strong>{comment.name}:</strong> {comment.comment}</p>
+              </div>
+            ))}
+          </div>
+
+          <hr className="section-divider" />
+
+          {/* Formulario para agregar un comentario */}
+          <div className="add-comment">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Escribe un comentario..."
+            />
+            <button onClick={handleCommentSubmit}>Agregar Comentario</button>
+          </div>
+        </section>
+  
       </main>
+      
       <footer className="main-page-footer">
         <p>Footer content-Add continue test 4</p>
       </footer>
-
-      {/* Modal Confirmations*/}
+  
+      {/* Modal Confirmations */}
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={handleCancelDelete}

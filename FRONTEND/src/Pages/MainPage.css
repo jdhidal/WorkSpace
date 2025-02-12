@@ -114,3 +114,101 @@
   text-align: center;
   padding: 1rem;
 }
+
+
+/* Comentarios */
+/* Comentarios */
+.comments-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f0f0f0; /* Fondo más suave para la sección */
+  border-radius: 10px; /* Bordes más redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  max-width: 1000px;  /* Ajusta el ancho máximo */
+  margin: 0 auto;     /* Centra los comentarios */
+}
+
+.comments-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Cuatro columnas para los comentarios */
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.comment-card {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 120px; /* Altura fija para los cuadros */
+}
+
+.comment-card:hover {
+  transform: translateY(-5px); /* Levanta el comentario al pasar el ratón */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada al pasar el ratón */
+}
+
+.comment-card p {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+  margin: 5px 0;
+}
+
+.comment-card .comment-author {
+  font-weight: bold;
+  color: #ff5733; /* Color del nombre del autor (puedes cambiar este color) */
+}
+
+.add-comment {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.add-comment textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  resize: vertical;
+  min-height: 120px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-family: 'Arial', sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.add-comment textarea:focus {
+  border-color: #007bff; /* Cambio de color cuando el campo está enfocado */
+  outline: none;
+}
+
+.add-comment button {
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-comment button:hover {
+  background-color: #218838; /* Cambio de color al pasar el ratón */
+  transform: translateY(-3px); /* Efecto de botón al pasar el ratón */
+}
+
+.add-comment button:active {
+  transform: translateY(1px); /* Efecto de compresión cuando se hace clic */
+}
+
+.section-divider {
+  border: 10;
+  border-top: 2px solid #af4949;
+  margin: 20px 0;
+}
