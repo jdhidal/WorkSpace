@@ -7,7 +7,7 @@ import './AvailabilityForm.css';
 const AvailabilityForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { id, name, description } = location.state || {};
+  const { id, name, description, nameuser } = location.state || {};
 
   const [availabilityData, setAvailabilityData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,41 @@ const AvailabilityForm = () => {
       } catch (error) {
         alert("Error al eliminar la disponibilidad");
       }
+    }
+  };
+
+  const handleReserve = async () => {
+    const reservationData = {
+      query: `
+        mutation($input: ReservationInput) {
+          createReservation(input: $input) {
+            id
+            facility_name
+            user_name
+            reservation_date
+            status
+          }
+        }
+      `,
+      variables: {
+        input: {
+          facility_name: name,  // El nombre del espacio
+          user_name: nameuser,   // El nombre del usuario
+          reservation_date: new Date().toISOString().split('T')[0],  // Fecha actual en formato YYYY-MM-DD
+          status: "activo"       // Estado predeterminado
+        }
+      }
+    };
+
+    try {
+      const response = await axios.post('http://13.216.135.117:3010/create-reservation', reservationData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log('Reserva realizada con éxito:', response.data);
+      alert("Reserva realizada con éxito");
+    } catch (error) {
+      console.error('Error al realizar la reserva:', error);
+      alert("Error al realizar la reserva");
     }
   };
 
@@ -97,7 +132,7 @@ const AvailabilityForm = () => {
             )}
 
             <div className="availability-actions">
-              <button className="reserve-button">Reservar</button>
+              <button className="reserve-button" onClick={handleReserve}>Reservar</button>
               <button className="back-button" onClick={() => window.history.back()}>Volver</button>
             </div>
           </div>
