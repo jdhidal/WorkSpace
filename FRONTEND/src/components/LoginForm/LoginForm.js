@@ -22,7 +22,9 @@ const LoginForm = () => {
       setMessage('Login successful!');
       Cookies.set('token', response.data.token, { expires: 1, secure: false, sameSite: 'Lax' });
       console.log('Email enviado al main:', email);
-      navigate('/main', { state: { email } });
+      localStorage.setItem('userEmail', email);
+      navigate('/main');
+      
     } catch (error) {
       console.error('Error during login:', error);
       setMessage('Password or users incorrect. Please log in again');

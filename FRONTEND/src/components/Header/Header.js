@@ -5,11 +5,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Header.css';
 
-const Header = ({ onLogout }) => {
+const Header = ({ email, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [email, setEmail] = useState(location.state?.email);
+  
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

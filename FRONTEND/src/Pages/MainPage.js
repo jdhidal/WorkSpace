@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import './MainPage.css'; // Import Styles
 import Edificios from './Edificios.jpg';
@@ -11,13 +11,13 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [spaces, setSpaces] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Estatus modal enable
-  const [spaceToDelete, setSpaceToDelete] = useState(null); // Space elimanated in wait
+  const [spaceToDelete, setSpaceToDelete] = useState(null); // Space eliminada en espera
   const [userRole, setUserRole] = useState(null);
-  
-  const location = useLocation();
-  const [email, setEmail] = useState(location.state?.email);
+
+  const [email, setEmail] = useState(localStorage.getItem('userEmail'));
 
   const handleLogout = () => {
+    localStorage.removeItem('userEmail'); // Borrar el email del localStorage
     navigate('/');
   };
 
@@ -82,8 +82,8 @@ const MainPage = () => {
   };
 
   const handleDeleteClick = (id) => {
-    setSpaceToDelete(id); // Save the ID the Space
-    setIsModalOpen(true); // Open the modal
+    setSpaceToDelete(id); // Guardar el ID del espacio
+    setIsModalOpen(true); // Abrir el modal
   };
 
   const handleConfirmDelete = async () => {
@@ -99,7 +99,7 @@ const MainPage = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Update if elimated Space
+      // Actualizar si el espacio fue eliminado
       setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== spaceToDelete));
       setIsModalOpen(false);
       toast.success('Espacio eliminado exitosamente'); 
@@ -110,7 +110,7 @@ const MainPage = () => {
   };
 
   const handleCancelDelete = () => {
-    setIsModalOpen(false); // Close Modal
+    setIsModalOpen(false); // Cerrar modal
     setSpaceToDelete(null); 
   };
 
@@ -123,7 +123,7 @@ const MainPage = () => {
   return (
     <div className="main-page-container">
       <header className="main-page-header">
-        <Header email={email || 'Usuario'} onLogout={handleLogout} />
+        <Header email={email} onLogout={handleLogout} />
       </header>
       <main className="main-page-content">
         <div className="welcome-section">
