@@ -16,7 +16,7 @@ const Header = ({ onLogout }) => {
 
   useEffect(() => {
     if (email) {
-      axios.get(`http://localhost:3014/users/${email}`)
+      axios.get(`http://100.27.128.132:3014/users/${email}`)
         .then(response => {
           setUserData(response.data);
           setLoading(false); 

@@ -30,7 +30,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        const response = await axios.get(`http://localhost:3014/users/${email}`);
+        const response = await axios.get(`http://100.27.128.132:3014/users/${email}`);
         setUserRole(response.data.role);
       } catch (error) {
         console.error('Error fetching user role:', error);
