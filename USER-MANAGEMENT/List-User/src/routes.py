@@ -18,10 +18,10 @@ def get_user_by_email(email):
             if user:
                 return jsonify(user)
             else:
-                return jsonify({"error": "Usuario no encontrado"}), 404
+                return jsonify({"error": "User undifined"}), 404
         except Exception as e:
-            return jsonify({"error": f"Error al ejecutar la consulta: {str(e)}"}), 500
+            return jsonify({"error": f"Error run consult: {str(e)}"}), 500
         finally:
             cursor.close()
             conn.close()
-    return jsonify({"error": "Error en la conexión a la base de datos"}), 500
+    return jsonify({"error": "Error conection databases"}), 500
