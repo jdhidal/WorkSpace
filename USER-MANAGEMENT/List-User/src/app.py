@@ -4,7 +4,7 @@ from routes import user_routes
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/users/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, resources={r"/users/*": {"origins": "http://44.218.54.250:3000"}}, supports_credentials=True)
 
 app.register_blueprint(user_routes)
 
