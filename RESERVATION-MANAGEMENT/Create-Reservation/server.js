@@ -12,7 +12,6 @@ const port = process.env.PORT || 3010;
 
 app.use(cors());
 
-// Conexión a la base de datos
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -28,18 +27,15 @@ db.connect((err) => {
   console.log('Conectado a la base de datos MySQL');
 });
 
-// Cargar el esquema y los resolvers
 const schema = require('./schema');
 const resolvers = require('./resolvers');
 
-// Ruta para GraphQL
 app.use('/create-reservation', graphqlHTTP({
   schema,
   rootValue: resolvers,
   graphiql: true
 }));
 
-// Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });

@@ -6,7 +6,6 @@ const { db } = require('./src/db/db');  // Ruta correcta para db.js
 const { schema } = require('./src/graphql/schema');  // Ruta correcta para schema.js
 const { root } = require('./src/graphql/resolvers');  // Ruta correcta para resolvers.js
 
-// Cargar las variables de entorno
 dotenv.config();
 
 
