@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors({
   origin: 'http://44.218.54.250:3000',
-  methods: ['GET', 'POST'],
+  methods: '*',
   credentials: true,
 }));
 
