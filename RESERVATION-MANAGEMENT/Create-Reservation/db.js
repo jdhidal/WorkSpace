@@ -1,6 +1,4 @@
 const mysql = require('mysql2');
-
-// Crear la conexión con MySQL usando las variables de entorno
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -9,7 +7,6 @@ const db = mysql.createConnection({
   port: process.env.DB_PORT
 });
 
-// Función para conectar a la base de datos
 const connectDB = () => {
   db.connect((err) => {
     if (err) {
