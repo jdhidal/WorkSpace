@@ -67,7 +67,7 @@ const MainPage = () => {
     // Fetch comments from the API
     const fetchComments = async () => {
       try {
-        const response = await axios.get('http://35.175.25.214:3016/list-comments');
+        const response = await axios.get('http://LBDomainComments-c85b18449630d969.elb.us-east-1.amazonaws.com:3016/list-comments');
         setComments(response.data); // Set the comments in state
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -144,7 +144,7 @@ const MainPage = () => {
     }
 
     try {
-      const response = await fetch('http://35.175.25.214:3015/create-comments', {
+      const response = await fetch('http://LBDomainComments-c85b18449630d969.elb.us-east-1.amazonaws.com:3015/create-comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
