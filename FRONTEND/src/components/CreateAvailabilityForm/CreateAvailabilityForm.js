@@ -61,7 +61,7 @@ const CreateAvailabilityForm = () => {
     };
 
     try {
-      const response = await axios.post("http://44.207.49.60:3007/availability", dataToSend, {
+      const response = await axios.post("http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3007/availability", dataToSend, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });

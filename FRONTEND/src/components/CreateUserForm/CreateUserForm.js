@@ -15,7 +15,7 @@ const CreateUserForm = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get('http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3020/list-role');
+        const response = await axios.get('http://LBDomainRole-0779122421317ac1.elb.us-east-1.amazonaws.com:3020/list-role');
         setRoles(response.data.roles);  // Set the roles array
         setRole(response.data.roles[0]?.nombre);  // Set the default role if available
       } catch (error) {

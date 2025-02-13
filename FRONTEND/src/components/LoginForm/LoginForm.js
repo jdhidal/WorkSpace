@@ -34,7 +34,7 @@ const LoginForm = () => {
   return (
     <div className="form-wrapper">
       <div class="centered-text">
-        <h2>Welcome to WorkSpace</h2>
+        <h2>Welcome to WorkSpace esto es una prueba</h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-control">

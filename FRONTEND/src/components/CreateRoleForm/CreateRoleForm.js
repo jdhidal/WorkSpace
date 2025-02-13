@@ -15,7 +15,7 @@ const CreateRoleForm = () => {
 
   const fetchRoles = async () => {
     try {
-      const response = await axios.get('http://34.237.185.147:3020/list-role');
+      const response = await axios.get('http://LBDomainRole-0779122421317ac1.elb.us-east-1.amazonaws.com:3020/list-role');
       setRoles(response.data.roles);
     } catch (error) {
       console.error('Error al obtener los roles:', error);
@@ -31,7 +31,7 @@ const CreateRoleForm = () => {
     }
 
     try {
-      const response = await axios.post('http://34.237.185.147:3017/create-role', {
+      const response = await axios.post('http://LBDomainRole-0779122421317ac1.elb.us-east-1.amazonaws.com:3017/create-role', {
         role,
       });
 
@@ -64,7 +64,7 @@ const CreateRoleForm = () => {
 
     // Enviar la solicitud SOAP con axios
     try {
-      const response = await axios.post('http://34.237.185.147:3019/update-role', soapBody, {
+      const response = await axios.post('http://LBDomainRole-0779122421317ac1.elb.us-east-1.amazonaws.com:3019/update-role', soapBody, {
         headers: {
           'Content-Type': 'text/xml',  // Asegurarse de que sea tipo XML
         },
@@ -81,7 +81,7 @@ const CreateRoleForm = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://34.237.185.147:3018/delete-role/${id}`);
+      await axios.delete(`http://LBDomainRole-0779122421317ac1.elb.us-east-1.amazonaws.com:3018/delete-role/${id}`);
       fetchRoles();
     } catch (error) {
       console.error('Error eliminando el rol:', error);

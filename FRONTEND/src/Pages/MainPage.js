@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
-import './MainPage.css'; // Import Styles
+import './MainPage.css';
 import Edificios from './Edificios.jpg';
 import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal'; // Import el modal
 import { toast } from 'react-toastify'; // For Notifications
-import axios from 'axios'; // Import axios para hacer peticiones
+import axios from 'axios'; 
 
 const MainPage = () => {
   const navigate = useNavigate();
   const [spaces, setSpaces] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Estatus modal enable
-  const [spaceToDelete, setSpaceToDelete] = useState(null); // Space eliminada en espera
+  const [spaceToDelete, setSpaceToDelete] = useState(null); 
   const [userRole, setUserRole] = useState(null);
 
   const [email, setEmail] = useState(localStorage.getItem('userEmail'));
 
-  // Estado para manejar los comentarios
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
   const handleLogout = () => {
-    localStorage.removeItem('userEmail'); // Borrar el email del localStorage
+    localStorage.removeItem('userEmail');
     navigate('/');
   };
 
@@ -43,7 +42,7 @@ const MainPage = () => {
 
     const fetchSpaces = async () => {
       try {
-        const response = await fetch('http://LBDomainSpaces-ff090cc428b5bffc.elb.us-east-1.amazonaws.com:3005/coworking_spaces', {
+        const response = await fetch('http://35.171.43.245:3005/coworking_spaces', {
           method: 'GET',
           credentials: 'include',
         });
@@ -68,7 +67,7 @@ const MainPage = () => {
     // Fetch comments from the API
     const fetchComments = async () => {
       try {
-        const response = await axios.get('http://35.175.25.214:3016/list-comments');
+        const response = await axios.get('http://LBDomainComments-c85b18449630d969.elb.us-east-1.amazonaws.com:3016/list-comments');
         setComments(response.data); // Set the comments in state
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -96,15 +95,15 @@ const MainPage = () => {
   };
 
   const handleDeleteClick = (id) => {
-    setSpaceToDelete(id); // Guardar el ID del espacio
-    setIsModalOpen(true); // Abrir el modal
+    setSpaceToDelete(id);
+    setIsModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     if (!spaceToDelete) return;
 
     try {
-      const response = await fetch(`http://LBDomainSpaces-ff090cc428b5bffc.elb.us-east-1.amazonaws.com:3006/coworking_spaces/${spaceToDelete}`, {
+      const response = await fetch(`http://35.171.43.245:3006/coworking_spaces/${spaceToDelete}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -113,7 +112,6 @@ const MainPage = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Actualizar si el espacio fue eliminado
       setSpaces((prevSpaces) => prevSpaces.filter((space) => space.id !== spaceToDelete));
       setIsModalOpen(false);
       toast.success('Espacio eliminado exitosamente'); 
@@ -124,7 +122,7 @@ const MainPage = () => {
   };
 
   const handleCancelDelete = () => {
-    setIsModalOpen(false); // Cerrar modal
+    setIsModalOpen(false);
     setSpaceToDelete(null); 
   };
 
@@ -146,23 +144,23 @@ const MainPage = () => {
     }
 
     try {
-      const response = await fetch('http://35.175.25.214:3015/create-comments', {
+      const response = await fetch('http://LBDomainComments-c85b18449630d969.elb.us-east-1.amazonaws.com:3015/create-comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: userRole.name,      // Usamos userRole.name
-          comment: newComment.trim() // Usamos el comentario que se escribió
+          name: userRole.name,
+          comment: newComment.trim()
         })
       });
 
       const data = await response.json();
       if (response.ok) {
         console.log('Comentario enviado con éxito:', data);
-        // Actualizamos los comentarios en la UI
+        
         setComments((prevComments) => [...prevComments, { name: userRole.name, comment: newComment }]);
-        setNewComment(""); // Limpiar el comentario después de enviarlo
+        setNewComment("");
         toast.success('Comentario enviado');
       } else {
         console.error('Error al enviar el comentario:', data);

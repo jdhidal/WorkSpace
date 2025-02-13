@@ -15,7 +15,7 @@ const AvailabilityForm = () => {
 
   useEffect(() => {
     if (id) {
-      axios.get(`http://44.207.49.60:3008/availability/${id}`, { withCredentials: true })
+      axios.get(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3008/availability/${id}`, { withCredentials: true })
         .then(response => {
           setAvailabilityData(response.data);
           setLoading(false);
@@ -30,7 +30,7 @@ const AvailabilityForm = () => {
   const handleDelete = async () => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta disponibilidad?")) {
       try {
-        await axios.delete(`http://44.207.49.60:3009/delete-availability/${id}`, { withCredentials: true });
+        await axios.delete(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3009/delete-availability/${id}`, { withCredentials: true });
         setAvailabilityData(null);
         alert("Disponibilidad eliminada con éxito");
       } catch (error) {
@@ -63,10 +63,10 @@ const AvailabilityForm = () => {
     };
 
     try {
-      const response = await axios.post('http://13.216.135.117:3010/create-reservation', reservationData, {
+      const response = await axios.post('http://LBDomainReservation-4095db6f9680d4b1.elb.us-east-1.amazonaws.com:3010/create-reservation', reservationData, {
         headers: { 'Content-Type': 'application/json' },
       });
-      await axios.post(`http://44.207.49.60:3011/reduce-capacity/${id}`, { withCredentials: true });
+      await axios.post(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3011/reduce-capacity/${id}`, { withCredentials: true });
       console.log('Reserva realizada con éxito:', response.data);
       alert("Reserva realizada con éxito");
       navigate('/main');
