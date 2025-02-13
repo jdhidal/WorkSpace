@@ -16,7 +16,7 @@ const Header = ({ email, onLogout }) => {
 
   useEffect(() => {
     if (email) {
-      axios.get(`http://100.27.128.132:3014/users/${email}`)
+      axios.get(`http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3014/users/${email}`)
         .then(response => {
           setUserData(response.data);
           setLoading(false); 
@@ -30,7 +30,7 @@ const Header = ({ email, onLogout }) => {
   }, [email]);
 
   const handleLogout = () => {
-    fetch('http://100.27.128.132:3003/logout', {
+    fetch('http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3003/logout', {
       method: 'POST',
       credentials: 'include',
     })
