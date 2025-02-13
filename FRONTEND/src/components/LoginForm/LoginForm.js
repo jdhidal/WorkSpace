@@ -14,7 +14,7 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3002/login', {
+      const response = await axios.post('http://100.27.128.132:3002/login', {
         email,
         password
       }, { withCredentials: true }); // Credential
