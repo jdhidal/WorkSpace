@@ -43,7 +43,7 @@ const MainPage = () => {
 
     const fetchSpaces = async () => {
       try {
-        const response = await fetch('http://35.171.43.245:3005/coworking_spaces', {
+        const response = await fetch('http://LBDomainSpaces-ff090cc428b5bffc.elb.us-east-1.amazonaws.com:3005/coworking_spaces', {
           method: 'GET',
           credentials: 'include',
         });
@@ -104,7 +104,7 @@ const MainPage = () => {
     if (!spaceToDelete) return;
 
     try {
-      const response = await fetch(`http://35.171.43.245:3006/coworking_spaces/${spaceToDelete}`, {
+      const response = await fetch(`http://LBDomainSpaces-ff090cc428b5bffc.elb.us-east-1.amazonaws.com:3006/coworking_spaces/${spaceToDelete}`, {
         method: 'DELETE',
         credentials: 'include',
       });
