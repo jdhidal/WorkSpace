@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: WorkSpace Role Management API
+  description: API to create roles for the WorkSpace platform.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3017
+    description: Local server
+paths:
+  /create-role:
+    post:
+      summary: Create a new role
+      description: Endpoint to create a new role in the system.
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  example: "Admin"
+      responses:
+        "201":
+          description: Role created successfully.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "New Role Succesful"
+        "400":
+          description: Invalid request.
+        "500":
+          description: Server error when creating the role.
