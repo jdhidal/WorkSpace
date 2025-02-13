@@ -8,8 +8,8 @@ require_relative './routes/coworking_routes'
 
 use Rack::Cors do
   allow do
-    origins 'http://44.218.54.250:3000'
-    resource '/coworking_spaces',
+    origins '*'
+    resource '*',
       headers: :any,
       methods: [:get, :post, :put, :delete, :options],
       credentials: true
