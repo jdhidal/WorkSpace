@@ -63,7 +63,7 @@ const AvailabilityForm = () => {
     };
 
     try {
-      const response = await axios.post('http://13.216.135.117:3010/create-reservation', reservationData, {
+      const response = await axios.post('http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3010/create-reservation', reservationData, {
         headers: { 'Content-Type': 'application/json' },
       });
       await axios.post(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3011/reduce-capacity/${id}`, { withCredentials: true });

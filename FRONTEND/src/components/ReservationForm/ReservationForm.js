@@ -8,7 +8,7 @@ const ReservationForm = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.post('http://13.216.135.117:3012/list-reservation', {
+    axios.post('http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3012/list-reservation', {
       query: "{ listReservations { id facility_name user_name reservation_date status } }"
     })
     .then(response => {
