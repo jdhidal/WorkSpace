@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  title: WorkSpace Reservation API
+  description: API para crear reservaciones en espacios de coworking usando GraphQL.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3010
+    description: Servidor local
+paths:
+  /create-reservation:
+    post:
+      summary: Ejecutar consultas GraphQL
+      description: Endpoint para enviar consultas y mutaciones GraphQL.
+      operationId: executeGraphQL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "mutation { createReservation(input: { facility_name: \"Sala A\", user_name: \"Juan Perez\", reservation_date: \"2025-02-15\", status: \"active\" }) { id facility_name user_name reservation_date status } }"
+      responses:
+        "200":
+          description: Respuesta exitosa con datos de la reserva creada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      createReservation:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          facility_name:
+                            type: string
+                          user_name:
+                            type: string
+                          reservation_date:
+                            type: string
+                          status:
+                            type: string
+        "400":
+          description: Solicitud incorrecta
+        "500":
+          description: Error del servidor

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ element }) => {
+const ProtectedRoute = () => {
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -9,8 +9,9 @@ const ProtectedRoute = ({ element }) => {
   };
 
   const token = getCookie('token');
-  console.log('Token:', token); // Verify token in Aplication Web
-  return token ? element : <Navigate to="/" />;
+  console.log('Token:', token); 
+
+  return token ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

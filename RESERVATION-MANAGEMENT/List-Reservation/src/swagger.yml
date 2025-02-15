@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: WorkSpace Reservation API
+  description: API para listar reservaciones en espacios de coworking usando GraphQL.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3012
+    description: Servidor local
+paths:
+  /list-reservation:
+    post:
+      summary: Ejecutar consultas GraphQL para listar reservaciones
+      description: Endpoint para enviar consultas GraphQL y obtener la lista de reservaciones.
+      operationId: listReservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "{ listReservations { id facility_name user_name reservation_date status } }"
+      responses:
+        "200":
+          description: Respuesta exitosa con la lista de reservaciones.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      listReservations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            facility_name:
+                              type: string
+                            user_name:
+                              type: string
+                            reservation_date:
+                              type: string
+                            status:
+                              type: string
+        "400":
+          description: Solicitud incorrecta
+        "500":
+          description: Error del servidor

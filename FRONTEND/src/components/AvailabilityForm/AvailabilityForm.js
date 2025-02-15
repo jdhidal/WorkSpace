@@ -1,161 +1,147 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { FaCheckCircle, FaTimesCircle, FaTrash } from 'react-icons/fa';
 import './AvailabilityForm.css';
 
 const AvailabilityForm = () => {
-  const [availabilities, setAvailabilities] = useState([]);
-  const [newAvailability, setNewAvailability] = useState({ start_date: '', end_date: '', spots: '', cost: '' });
-  const [updateAvailability, setUpdateAvailability] = useState({ id: '', start_date: '', end_date: '', spots: '', cost: '' });
+  const location = useLocation();
   const navigate = useNavigate();
+  const { id, name, description, nameuser } = location.state || {};
 
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date().toISOString().split('T')[0];
+  const [availabilityData, setAvailabilityData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('https://microservice-list-avail-b6a8271f65ce.herokuapp.com/availability')
-      .then(response => setAvailabilities(response.data))
-      .catch(error => console.error('Error fetching availabilities:', error));
-  }, []);
-
-  const handleCreate = () => {
-    if (newAvailability.start_date && newAvailability.end_date && newAvailability.spots && newAvailability.cost) {
-      axios.post('https://microservice-create-avail-6edcf79721ad.herokuapp.com/availability', newAvailability)
+    if (id) {
+      axios.get(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3008/availability/${id}`, { withCredentials: true })
         .then(response => {
-          setAvailabilities([...availabilities, response.data]);
-          setNewAvailability({ start_date: '', end_date: '', spots: '', cost: '' });
-          window.location.reload();
+          setAvailabilityData(response.data);
+          setLoading(false);
         })
-        .catch(error => console.error('Error creating availability:', error));
-    } else {
-      alert('Please fill in all fields before creating an availability.');
+        .catch(() => {
+          setError("No se pudo cargar la información de disponibilidad");
+          setLoading(false);
+        });
+    }
+  }, [id]);
+
+  const handleDelete = async () => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta disponibilidad?")) {
+      try {
+        await axios.delete(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3009/delete-availability/${id}`, { withCredentials: true });
+        setAvailabilityData(null);
+        alert("Disponibilidad eliminada con éxito");
+      } catch (error) {
+        alert("Error al eliminar la disponibilidad");
+      }
     }
   };
 
-  const handleUpdate = () => {
-    if (updateAvailability.start_date && updateAvailability.end_date && updateAvailability.spots && updateAvailability.cost) {
-      axios.put(`https://microservice-update-avail-09ae5ce9defb.herokuapp.com/availability/${updateAvailability.id}`, updateAvailability)
-        .then(response => {
-          setAvailabilities(availabilities.map(availability => 
-            availability.id === updateAvailability.id ? response.data : availability
-          ));
-          setUpdateAvailability({ id: '', start_date: '', end_date: '', spots: '', cost: '' });
-          window.location.reload();
-        })
-        .catch(error => console.error('Error updating availability:', error));
-    } else {
-      alert('Please fill in all fields before updating an availability.');
+  const handleReserve = async () => {
+    const reservationData = {
+      query: `
+        mutation($input: ReservationInput) {
+          createReservation(input: $input) {
+            id
+            facility_name
+            user_name
+            reservation_date
+            status
+          }
+        }
+      `,
+      variables: {
+        input: {
+          facility_name: name,
+          user_name: nameuser,
+          reservation_date: new Date().toISOString().split('T')[0],
+          status: "activo" 
+        }
+      }
+    };
+
+    try {
+      const response = await axios.post('http://LBDomainReservation-4095db6f9680d4b1.elb.us-east-1.amazonaws.com:3010/create-reservation', reservationData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      await axios.post(`http://LBDomainAvailability-643304baf32e8ac9.elb.us-east-1.amazonaws.com:3011/reduce-capacity/${id}`, { withCredentials: true });
+      console.log('Reserva realizada con éxito:', response.data);
+      alert("Reserva realizada con éxito");
+      navigate('/main');
+    } catch (error) {
+      console.error('Error al realizar la reserva:', error);
+      alert("Error al realizar la reserva");
     }
-  };
-
-  const handleDelete = (id) => {
-    axios.delete(`https://microservice-delete-avail-a8239ac814a9.herokuapp.com/availability/${id}`)
-      .then(() => {
-        setAvailabilities(availabilities.filter(availability => availability.id !== id));
-      })
-      .catch(error => console.error('Error deleting availability:', error));
-  };
-
-  const handleEditClick = (availability) => {
-    setUpdateAvailability(availability);
   };
 
   return (
-    <div className="availability-form">
-      <h2>Availability</h2>
+    <div className="availability-form-container">
+      <header className="availability-form-header">
+        <h2>Detalles del Espacio</h2>
+      </header>
 
-      <div className="instructions">
-        <h3>Instructions</h3>
-        <p>
-          <strong>Start Date:</strong> Enter the start date of the availability.<br />
-          <strong>End Date:</strong> Enter the end date of the availability.<br />
-          <strong>Spots:</strong> Enter the number of spots available.<br />
-          <strong>Cost:</strong> Enter the cost per spot.
-        </p>
-      </div>
+      <main className="availability-form-content">
+        {loading && <p>Cargando información...</p>}
+        {error && <p>{error}</p>}
 
-      <div>
-        <h3>Create Availability</h3>
-        <input
-          type="date"
-          placeholder="Start Date"
-          value={newAvailability.start_date}
-          onChange={(e) => setNewAvailability({ ...newAvailability, start_date: e.target.value })}
-          min={today}
-        />
-        <input
-          type="date"
-          placeholder="End Date"
-          value={newAvailability.end_date}
-          onChange={(e) => setNewAvailability({ ...newAvailability, end_date: e.target.value })}
-          min={today}
-        />
-        <input
-          type="number"
-          placeholder="Spots"
-          value={newAvailability.spots}
-          onChange={(e) => setNewAvailability({ ...newAvailability, spots: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Cost"
-          value={newAvailability.cost}
-          onChange={(e) => setNewAvailability({ ...newAvailability, cost: e.target.value })}
-        />
-        <button onClick={handleCreate}>Create</button>
-      </div>
+        {id ? (
+          <div className="space-details">
+            <div className="space-title">
+              <h3>{name}</h3>
+              <p className="space-description">{description}</p>
+            </div>
 
-      <div>
-        <h3>Update Availability</h3>
-        <input
-          type="text"
-          placeholder="ID"
-          value={updateAvailability.id}
-          readOnly
-        />
-        <input
-          type="date"
-          placeholder="Start Date"
-          value={updateAvailability.start_date}
-          onChange={(e) => setUpdateAvailability({ ...updateAvailability, start_date: e.target.value })}
-          min={today}
-        />
-        <input
-          type="date"
-          placeholder="End Date"
-          value={updateAvailability.end_date}
-          onChange={(e) => setUpdateAvailability({ ...updateAvailability, end_date: e.target.value })}
-          min={today}
-        />
-        <input
-          type="number"
-          placeholder="Spots"
-          value={updateAvailability.spots}
-          onChange={(e) => setUpdateAvailability({ ...updateAvailability, spots: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Cost"
-          value={updateAvailability.cost}
-          onChange={(e) => setUpdateAvailability({ ...updateAvailability, cost: e.target.value })}
-        />
-        <button onClick={handleUpdate}>Update</button>
-      </div>
+            {availabilityData && availabilityData.length > 0 ? (
+              <div className="availability-info">
+                <h4>Disponibilidad:</h4>
+                <div className="availability-item">
+                  {availabilityData.map((item) => (
+                    <div key={item.id} className="availability-item-details">
+                      <p><strong>Fecha Inicio:</strong> {new Date(item.start_date).toLocaleDateString()}</p>
+                      <p><strong>Fecha Fin:</strong> {new Date(item.end_date).toLocaleDateString()}</p>
+                      <p><strong>Hora Inicio:</strong> {new Date(item.start_time).toLocaleTimeString()}</p>
+                      <p><strong>Hora Fin:</strong> {new Date(item.end_time).toLocaleTimeString()}</p>
+                      <p><strong>Estado:</strong> 
+                        <span className={`status ${item.status}`}>
+                          {item.status === 'available' ? <FaCheckCircle /> : <FaTimesCircle />}
+                          {item.status === 'available' ? 'Disponible' : 'No Disponible'}
+                        </span>
+                      </p>
+                      <p><strong>Capacidad Máxima:</strong> {item.max_capacity}</p>
+                      <div className="notes">
+                        <strong>Notas:</strong>
+                        <p>{item.notes || 'No hay notas adicionales.'}</p>
+                      </div>
+                      <p><strong>Fecha Creación:</strong> {new Date(item.created_at).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+                <button className="delete-availability-button" onClick={handleDelete}>
+                  <FaTrash /> Eliminar Disponibilidad
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p>No hay disponibilidad para mostrar.</p>
+                <button className="create-availability-button" onClick={() => {
+                  navigate(`/crear-disponibilidad/`, { state: { id, name, description } });
+                }}>
+                  Crear Disponibilidad
+                </button>
+              </div>
+            )}
 
-      <div>
-        <h3>Availability List</h3>
-        <ul>
-          {availabilities.map(availability => (
-            <li key={availability.id}>
-              {availability.start_date} - {availability.end_date} - {availability.spots} spots - ${availability.cost}
-              <button onClick={() => handleEditClick(availability)}>Edit</button>
-              <button onClick={() => handleDelete(availability.id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <button className="back-button" onClick={() => navigate('/main')}>Back to Main</button>
+            <div className="availability-actions">
+              <button className="reserve-button" onClick={handleReserve}>Reservar</button>
+              <button className="back-button" onClick={() => window.history.back()}>Volver</button>
+            </div>
+          </div>
+        ) : (
+          <p>No se pudo cargar la información del espacio.</p>
+        )}
+      </main>
     </div>
   );
 };

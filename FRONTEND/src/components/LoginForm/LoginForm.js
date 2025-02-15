@@ -14,14 +14,17 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://microservice-login-b1831f0a3737.herokuapp.com/login', {
+      const response = await axios.post('http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3002/login', {
         email,
         password
       }, { withCredentials: true }); // Credential
 
       setMessage('Login successful!');
       Cookies.set('token', response.data.token, { expires: 1, secure: false, sameSite: 'Lax' });
-      navigate('/main'); // Main view
+      console.log('Email enviado al main:', email);
+      localStorage.setItem('userEmail', email);
+      navigate('/main');
+      
     } catch (error) {
       console.error('Error during login:', error);
       setMessage('Password or users incorrect. Please log in again');
@@ -30,7 +33,9 @@ const LoginForm = () => {
 
   return (
     <div className="form-wrapper">
-      <h2>Login I need 18 in supletory</h2>
+      <div class="centered-text">
+        <h2>Welcome to WorkSpace esto es una prueba</h2>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="form-control">
           <input

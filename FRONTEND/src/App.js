@@ -1,17 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // Import Views of Front
 import LoginForm from './components/LoginForm/LoginForm';
+import Header from './components/Header/Header';
 import CreateUserForm from './components/CreateUserForm/CreateUserForm';
 import MainPage from './Pages/MainPage';
-import FacilitiesForm from './components/FacilitiesForm/FacilitiesForm';
-import BookingForm from './components/BookingForm/BookingForm';
-import AvailabilityForm from './components/AvailabilityForm/AvailabilityForm';
-import AvailabilityLogViewer from './components/AvailabilityLogViewer/AvailabilityLogViewer';
-import FacilityLogs from './components/FacilityLogs/FacilityLogs';
-import ReservationLogs from './components/ReservationLogs/ReservationLogs';
-import UserLogs from './components/UserLogs/UserLogs';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import CreatePlaceForm from './components/CreatePlaceForm/CreatePlaceForm';
+import AvailabilityForm from './components/AvailabilityForm/AvailabilityForm';
+import CreateAvailabilityForm from './components/CreateAvailabilityForm/CreateAvailabilityForm';
+import CreateRoleForm from './components/CreateRoleForm/CreateRoleForm';
+import ReservationForm from './components/ReservationForm/ReservationForm';
 
 const App = () => {
   return (
@@ -20,15 +22,31 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LoginForm />} />
           <Route path="/create" element={<CreateUserForm />} />
-          <Route path="/main" element={<ProtectedRoute element={<MainPage />} />} />
-          <Route path="/facilities" element={<ProtectedRoute element={<FacilitiesForm />} />} />
-          <Route path="/reservations" element={<ProtectedRoute element={<BookingForm />} />} />
-          <Route path="/availability" element={<ProtectedRoute element={<AvailabilityForm />} />} />
-          <Route path="/availability-logs" element={<ProtectedRoute element={<AvailabilityLogViewer />} />} />
-          <Route path="/facility-logs" element={<ProtectedRoute element={<FacilityLogs />} />} />
-          <Route path="/reservation-logs" element={<ProtectedRoute element={<ReservationLogs />} />} />
-          <Route path="/user-logs" element={<ProtectedRoute element={<UserLogs />} />} />
+          
+          {/* Routes Protected */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/main" element={<MainPage />} />
+            <Route path="/header" element={<Header />} />
+            <Route path="/create-place" element={<CreatePlaceForm />} />
+            <Route path="/availability-form" element={<AvailabilityForm />} />
+            <Route path="/crear-disponibilidad" element={<CreateAvailabilityForm />} />
+            <Route path="/create-role" element={<CreateRoleForm />} />
+            <Route path="/reservation-form" element={<ReservationForm />} />
+          </Route>
         </Routes>
+
+        {/* ToastContainer for notifications */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick 
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </Router>
   );

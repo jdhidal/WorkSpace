@@ -1,64 +1,95 @@
 // src/components/Header/Header.js
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './Header.css';
 
-const Header = ({ onLogout }) => {
+const Header = ({ email, onLogout }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (email) {
+      axios.get(`http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3014/users/${email}`)
+        .then(response => {
+          setUserData(response.data);
+          setLoading(false); 
+        })
+        .catch(err => {
+          console.error('Error fetching user data:', err);
+          setError('Failed to fetch user data');
+          setLoading(false);
+        });
+    }
+  }, [email]);
 
   const handleLogout = () => {
-    fetch('https://microservice-logout-55d935a07e7b.herokuapp.com/logout', {
+    fetch('http://LBDomainUsers-500a6fbf212aa3e9.elb.us-east-1.amazonaws.com:3003/logout', {
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include',
     })
       .then(response => response.json())
       .then(data => {
         console.log(data.message);
         onLogout();
-        navigate('/');
+        window.location.reload();
       })
       .catch(error => console.error('Error:', error));
   };
 
-  const goToFacilitiesForm = () => {
-    navigate('/facilities');
+  const handleCreatePlaceRedirect = () => {
+    navigate('/create-place');
   };
 
-  const goToReservationForm = () => {
-    navigate('/reservations');
+  const handleCreateRoleRedirect = () => {
+    navigate('/create-role');
   };
 
-  const goToAvailabilityForm = () => {
-    navigate('/availability');
+  const handleViewReservationRedirect = () => {
+    navigate('/reservation-form');
   };
 
-  const goToAvailabilityLog = () => {
-    navigate('/availability-logs'); 
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  const goToFacilityLogs = () => {
-    navigate('/facility-logs');
-  };
-
-  const goToReservationLogs = () => {
-    navigate('/reservation-logs');
-  };
-
-  const goToUserLogs = () => {
-    navigate('/user-logs');
-  };
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <header className="header">
-      <button className="button" onClick={goToReservationForm}>Reservations</button>
-      <button className="button" onClick={goToFacilitiesForm}>Facilities</button>
-      <button className="button" onClick={goToAvailabilityForm}>Availability</button>
-      <button className="button" onClick={goToAvailabilityLog}>Availability Logs</button>
-      <button className="button" onClick={goToFacilityLogs}>Facility Logs</button>
-      <button className="button" onClick={goToReservationLogs}>Reservation Logs</button>
-      <button className="button" onClick={goToUserLogs}>User Logs</button>
-      <button className="button logout-button" onClick={handleLogout}>Logout</button>
+      <div className="user-info">
+        {userData ? (
+          <p>Welcome, {userData.name} ({userData.role})</p>
+        ) : (
+          <p>No user data available</p>
+        )}
+      </div>
+
+      <div className="button-container">
+        {userData.role === "Administrator" && (
+          <>
+            <button className="button create-place-button" onClick={handleCreatePlaceRedirect}>
+              Create Place
+            </button>
+            <button className="button create-role-button" onClick={handleCreateRoleRedirect}>
+              Create Roles
+            </button>
+            <button className="button create-role-button" onClick={handleViewReservationRedirect}>
+              View Reservations
+            </button>
+          </>
+        )}
+        
+        <button className="button logout-button" onClick={handleLogout}>Logout</button>
+      </div>
     </header>
   );
 };

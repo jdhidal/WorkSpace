@@ -1,15 +1,9 @@
 # Front
 
-The `Front` directory contains the frontend application built with React. This application interacts with various microservices, communicates via Axios, and is protected with CORS. The directory is organized to maintain a clean structure with components and a main page.
+npm install react@18.3.1 react-dom@18.3.1 react-router-dom@6.26.1 react-scripts@5.0.1 axios@1.7.4 socket.io-client@4.7.5 js-cookie@3.0.5 graphql@16.9.0 graphql-request@7.1.0 serve@14.2.0 cross-env@7.0.3 --save-dev react-toastify react-icons
 
-## Features
 
-1. **React Components**: The application uses React for building user interfaces.
-2. **Axios for Communication**: Axios is used to handle HTTP requests to the microservices.
-3. **CORS Protection**: Configured to handle CORS issues and ensure secure communication.
-4. **Directory Structure**: Components are organized in the `src` folder, with a `Main` page as the entry point.
 
-## Directory Structure
 
 ```plaintext
 front/
